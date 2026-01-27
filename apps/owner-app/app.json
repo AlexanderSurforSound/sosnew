@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "Surf or Sound Owner",
+    "slug": "surf-or-sound-owner",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "scheme": "surfsoundowner",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1e40af"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "bundleIdentifier": "com.surfsound.owner",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.surfsound.owner",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1e40af"
+      }
+    },
+    "plugins": ["expo-router", "expo-secure-store"]
+  }
+}

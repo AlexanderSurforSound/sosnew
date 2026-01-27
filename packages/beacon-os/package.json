@@ -1,0 +1,53 @@
+{
+  "name": "@surf-or-sound/beacon-os",
+  "version": "1.0.0",
+  "description": "BeaconOS - Advanced Vacation Rental Operating System",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./pricing": {
+      "import": "./dist/modules/pricing/index.js",
+      "types": "./dist/modules/pricing/index.d.ts"
+    },
+    "./messaging": {
+      "import": "./dist/modules/messaging/index.js",
+      "types": "./dist/modules/messaging/index.d.ts"
+    },
+    "./operations": {
+      "import": "./dist/modules/operations/index.js",
+      "types": "./dist/modules/operations/index.d.ts"
+    },
+    "./analytics": {
+      "import": "./dist/modules/analytics/index.js",
+      "types": "./dist/modules/analytics/index.d.ts"
+    },
+    "./integrations": {
+      "import": "./dist/modules/integrations/index.js",
+      "types": "./dist/modules/integrations/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "date-fns": "^3.6.0",
+    "zod": "^3.23.8",
+    "ioredis": "^5.4.1",
+    "bullmq": "^5.13.0",
+    "openai": "^4.56.0",
+    "@anthropic-ai/sdk": "^0.27.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsup": "^8.2.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  }
+}

@@ -1,0 +1,122 @@
+name: API CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'services/api/**'
+      - '.github/workflows/api.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'services/api/**'
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  AZURE_WEBAPP_NAME_STAGING: api-surfsound-staging
+  AZURE_WEBAPP_NAME_PROD: api-surfsound-prod
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/api
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore SurfOrSound.API/SurfOrSound.API.csproj
+
+      - name: Build
+        run: dotnet build SurfOrSound.API/SurfOrSound.API.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+        continue-on-error: true
+
+      - name: Publish
+        run: dotnet publish SurfOrSound.API/SurfOrSound.API.csproj --configuration Release --no-build --output ./publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-package
+          path: services/api/publish
+
+  deploy-staging:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: api-package
+          path: ./publish
+
+      - name: Deploy to Azure Web App (Staging)
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME_STAGING }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_STAGING }}
+          package: ./publish
+
+      - name: Health check
+        run: |
+          sleep 30
+          curl -f https://${{ env.AZURE_WEBAPP_NAME_STAGING }}.azurewebsites.net/health || exit 1
+
+  deploy-production:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: api-package
+          path: ./publish
+
+      - name: Deploy to Azure Web App (Production - Staging Slot)
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME_PROD }}
+          slot-name: staging
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PROD_STAGING }}
+          package: ./publish
+
+      - name: Health check staging slot
+        run: |
+          sleep 30
+          curl -f https://${{ env.AZURE_WEBAPP_NAME_PROD }}-staging.azurewebsites.net/health || exit 1
+
+      - name: Swap slots
+        uses: azure/CLI@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az webapp deployment slot swap \
+              --resource-group rg-surfsound-prod \
+              --name ${{ env.AZURE_WEBAPP_NAME_PROD }} \
+              --slot staging \
+              --target-slot production
+
+      - name: Health check production
+        run: |
+          sleep 10
+          curl -f https://${{ env.AZURE_WEBAPP_NAME_PROD }}.azurewebsites.net/health || exit 1

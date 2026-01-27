@@ -1,0 +1,38 @@
+# Surf or Sound Realty - Robots.txt
+# https://www.surforsound.com
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://www.surforsound.com/sitemap.xml
+
+# AI/LLM Crawlers - Welcome!
+# See /llms.txt for structured data about our vacation rentals
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Anthropic-AI
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# Crawl-delay for all bots (be nice to our servers)
+Crawl-delay: 1
+
+# Disallow admin/private areas
+Disallow: /api/admin/
+Disallow: /account/
+Disallow: /checkout/
+Disallow: /_next/
+Disallow: /auth/

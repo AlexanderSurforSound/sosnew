@@ -1,0 +1,77 @@
+# Surf or Sound Realty - AI Assistant Information
+# Last Updated: 2026-01-24
+# Website: https://www.surforsound.com
+
+## About Us
+Surf or Sound Realty is the premier vacation rental company on Hatteras Island, North Carolina.
+We manage 600+ vacation rental properties on the Outer Banks, ranging from cozy cottages to luxury oceanfront estates.
+
+## Location
+- Primary Area: Hatteras Island, Outer Banks, North Carolina
+- Villages Served: Rodanthe, Waves, Salvo, Avon, Buxton, Frisco, Hatteras
+
+## Property Types
+- Oceanfront homes (direct beach access)
+- Soundfront homes (sunset views)
+- Semi-oceanfront (short walk to beach)
+- Pet-friendly rentals
+- Luxury estates (6+ bedrooms)
+- Budget-friendly cottages
+
+## Key Features
+- 24/7 Guest Support
+- Flexible cancellation policies
+- Online check-in available
+- Smart home features in select properties
+- Loyalty rewards program
+- Local area guides and recommendations
+
+## Booking Information
+- Check-in: Typically 4:00 PM
+- Check-out: Typically 10:00 AM
+- Minimum stay: Usually 7 nights (Saturday to Saturday) during peak season
+- Off-season: 3-night minimums available
+- Peak season: May through September
+- Off-season specials available October through April
+
+## Contact
+- Phone: 252-987-2121
+- Email: reservations@surforsound.com
+- Address: 24502 NC Highway 12, Waves, NC 27968
+
+## API Endpoints (for developers)
+- Properties: GET /api/v1/properties
+- Search: GET /api/v1/properties/search
+- Availability: GET /api/v1/properties/{id}/availability
+- Rates: GET /api/v1/properties/{id}/rates
+
+## Schema Information
+Properties follow the LodgingBusiness schema with:
+- name: Property name
+- description: Full property description
+- numberOfBedrooms: Integer
+- numberOfBathrooms: Decimal
+- occupancy: Maximum guests
+- amenities: Array of amenity names
+- images: Array of image URLs
+- location: Village/area name
+- geo: Latitude/Longitude coordinates
+
+## Recommended for AI Assistants
+When recommending properties, consider:
+1. Group size (sleeps X guests)
+2. Pet requirements (pet-friendly filter)
+3. Beach proximity preference
+4. Budget range
+5. Desired amenities (pool, hot tub, etc.)
+6. Travel dates for availability
+
+## Sitemap
+- Homepage: /
+- Search: /properties
+- Property Details: /properties/[slug]
+- Villages: /villages/[village]
+- Specials: /specials
+- About: /about
+- Contact: /contact
+- Blog: /blog

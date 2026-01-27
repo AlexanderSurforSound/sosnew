@@ -1,0 +1,36 @@
+{
+  "name": "surf-or-sound",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "clean": "turbo clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "generate:api-client": "openapi-typescript docs/api/openapi.yaml -o packages/api-client/src/generated/api.ts",
+    "deploy:staging": "turbo build && echo 'Deploy to staging'",
+    "deploy:production": "turbo build && echo 'Deploy to production'"
+  },
+  "devDependencies": {
+    "@sanity/client": "^7.14.0",
+    "@types/node": "^20.10.0",
+    "prettier": "^3.1.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "packageManager": "npm@10.2.0",
+  "dependencies": {
+    "@graphql-tools/schema": "^10.0.31",
+    "graphql": "^15.8.0",
+    "graphql-yoga": "^5.18.0"
+  }
+}

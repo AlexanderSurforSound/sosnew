@@ -1,0 +1,162 @@
+name: Infrastructure CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'infrastructure/terraform/**'
+      - '.github/workflows/infrastructure.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'infrastructure/terraform/**'
+
+env:
+  TF_VERSION: '1.6.0'
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infrastructure/terraform
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        run: terraform validate
+
+  plan-staging:
+    needs: validate
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infrastructure/terraform
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="storage_account_name=${{ secrets.TF_STATE_STORAGE_ACCOUNT }}" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=surfsound-staging.tfstate"
+
+      - name: Terraform Plan (Staging)
+        run: |
+          terraform plan \
+            -var-file="environments/staging.tfvars" \
+            -var="sql_admin_username=${{ secrets.SQL_ADMIN_USERNAME }}" \
+            -var="sql_admin_password=${{ secrets.SQL_ADMIN_PASSWORD }}" \
+            -var="track_api_key=${{ secrets.TRACK_API_KEY }}" \
+            -var="track_property_manager_id=${{ secrets.TRACK_PROPERTY_MANAGER_ID }}" \
+            -var="sanity_token=${{ secrets.SANITY_TOKEN }}" \
+            -var="jwt_key=${{ secrets.JWT_KEY }}" \
+            -var="remotelock_client_id=${{ secrets.REMOTELOCK_CLIENT_ID }}" \
+            -var="remotelock_client_secret=${{ secrets.REMOTELOCK_CLIENT_SECRET }}" \
+            -out=tfplan
+
+      - name: Upload Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan-staging
+          path: infrastructure/terraform/tfplan
+
+  apply-staging:
+    needs: validate
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment: staging
+    defaults:
+      run:
+        working-directory: infrastructure/terraform
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="storage_account_name=${{ secrets.TF_STATE_STORAGE_ACCOUNT }}" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=surfsound-staging.tfstate"
+
+      - name: Terraform Apply (Staging)
+        run: |
+          terraform apply \
+            -var-file="environments/staging.tfvars" \
+            -var="sql_admin_username=${{ secrets.SQL_ADMIN_USERNAME }}" \
+            -var="sql_admin_password=${{ secrets.SQL_ADMIN_PASSWORD }}" \
+            -var="track_api_key=${{ secrets.TRACK_API_KEY }}" \
+            -var="track_property_manager_id=${{ secrets.TRACK_PROPERTY_MANAGER_ID }}" \
+            -var="sanity_token=${{ secrets.SANITY_TOKEN }}" \
+            -var="jwt_key=${{ secrets.JWT_KEY }}" \
+            -var="remotelock_client_id=${{ secrets.REMOTELOCK_CLIENT_ID }}" \
+            -var="remotelock_client_secret=${{ secrets.REMOTELOCK_CLIENT_SECRET }}" \
+            -auto-approve
+
+  apply-production:
+    needs: validate
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    defaults:
+      run:
+        working-directory: infrastructure/terraform
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="storage_account_name=${{ secrets.TF_STATE_STORAGE_ACCOUNT }}" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=surfsound-prod.tfstate"
+
+      - name: Terraform Apply (Production)
+        run: |
+          terraform apply \
+            -var-file="environments/prod.tfvars" \
+            -var="sql_admin_username=${{ secrets.SQL_ADMIN_USERNAME_PROD }}" \
+            -var="sql_admin_password=${{ secrets.SQL_ADMIN_PASSWORD_PROD }}" \
+            -var="track_api_key=${{ secrets.TRACK_API_KEY }}" \
+            -var="track_property_manager_id=${{ secrets.TRACK_PROPERTY_MANAGER_ID }}" \
+            -var="sanity_token=${{ secrets.SANITY_TOKEN }}" \
+            -var="jwt_key=${{ secrets.JWT_KEY_PROD }}" \
+            -var="remotelock_client_id=${{ secrets.REMOTELOCK_CLIENT_ID }}" \
+            -var="remotelock_client_secret=${{ secrets.REMOTELOCK_CLIENT_SECRET }}" \
+            -auto-approve
