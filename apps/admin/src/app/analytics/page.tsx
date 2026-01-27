@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   BarChart2,
@@ -20,12 +20,68 @@ import { api } from '@/lib/api';
 
 type TimeRange = '7d' | '30d' | '90d' | '12m';
 
+interface TopProperty {
+  id: string;
+  name: string;
+  village: string;
+  revenue: number;
+  bookings: number;
+}
+
+interface VillageRevenue {
+  name: string;
+  revenue: number;
+  percentage: number;
+}
+
+interface SourceData {
+  name: string;
+  percentage: number;
+}
+
+interface TripType {
+  name: string;
+  percentage: number;
+}
+
+interface GuestOrigin {
+  state: string;
+  percentage: number;
+}
+
+function getDateRange(range: TimeRange): { startDate: string; endDate: string } {
+  const endDate = new Date();
+  const startDate = new Date();
+
+  switch (range) {
+    case '7d':
+      startDate.setDate(endDate.getDate() - 7);
+      break;
+    case '30d':
+      startDate.setDate(endDate.getDate() - 30);
+      break;
+    case '90d':
+      startDate.setDate(endDate.getDate() - 90);
+      break;
+    case '12m':
+      startDate.setFullYear(endDate.getFullYear() - 1);
+      break;
+  }
+
+  return {
+    startDate: startDate.toISOString().split('T')[0],
+    endDate: endDate.toISOString().split('T')[0],
+  };
+}
+
 export default function AnalyticsPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>('30d');
 
+  const dateRange = useMemo(() => getDateRange(timeRange), [timeRange]);
+
   const { data: analytics, isLoading, refetch } = useQuery({
     queryKey: ['analytics', timeRange],
-    queryFn: () => api.getAnalytics(timeRange),
+    queryFn: () => api.getAnalytics(dateRange),
   });
 
   return (
@@ -129,7 +185,7 @@ export default function AnalyticsPage() {
             <h3 className="font-semibold text-gray-900">Top Performing Properties</h3>
           </div>
           <div className="divide-y">
-            {(analytics?.topProperties || mockTopProperties).slice(0, 5).map((property, i) => (
+            {((analytics?.topProperties || mockTopProperties) as TopProperty[]).slice(0, 5).map((property, i) => (
               <div key={property.id} className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <span className="w-8 h-8 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center font-semibold text-sm">
@@ -155,7 +211,7 @@ export default function AnalyticsPage() {
             <h3 className="font-semibold text-gray-900">Revenue by Village</h3>
           </div>
           <div className="p-4">
-            {(analytics?.revenueByVillage || mockVillageRevenue).map((village) => (
+            {((analytics?.revenueByVillage || mockVillageRevenue) as VillageRevenue[]).map((village) => (
               <div key={village.name} className="mb-4 last:mb-0">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm font-medium text-gray-700">{village.name}</span>
@@ -181,7 +237,7 @@ export default function AnalyticsPage() {
           <div>
             <h4 className="text-sm font-medium text-gray-500 mb-4">Booking Sources</h4>
             <div className="space-y-3">
-              {(analytics?.bookingSources || mockBookingSources).map((source) => (
+              {((analytics?.bookingSources || mockBookingSources) as SourceData[]).map((source) => (
                 <div key={source.name} className="flex items-center justify-between">
                   <span className="text-sm text-gray-700">{source.name}</span>
                   <span className="text-sm font-medium">{source.percentage}%</span>
@@ -194,7 +250,7 @@ export default function AnalyticsPage() {
           <div>
             <h4 className="text-sm font-medium text-gray-500 mb-4">Trip Types</h4>
             <div className="space-y-3">
-              {(analytics?.tripTypes || mockTripTypes).map((type) => (
+              {((analytics?.tripTypes || mockTripTypes) as TripType[]).map((type) => (
                 <div key={type.name} className="flex items-center justify-between">
                   <span className="text-sm text-gray-700">{type.name}</span>
                   <span className="text-sm font-medium">{type.percentage}%</span>
@@ -207,7 +263,7 @@ export default function AnalyticsPage() {
           <div>
             <h4 className="text-sm font-medium text-gray-500 mb-4">Top Guest Origins</h4>
             <div className="space-y-3">
-              {(analytics?.guestOrigins || mockGuestOrigins).map((origin) => (
+              {((analytics?.guestOrigins || mockGuestOrigins) as GuestOrigin[]).map((origin) => (
                 <div key={origin.state} className="flex items-center justify-between">
                   <span className="text-sm text-gray-700">{origin.state}</span>
                   <span className="text-sm font-medium">{origin.percentage}%</span>

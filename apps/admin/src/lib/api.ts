@@ -214,6 +214,11 @@ class AdminApiClient {
     });
   }
 
+  // System Health
+  async getSystemHealth() {
+    return this.request<any>('/api/admin/system/health');
+  }
+
   // Analytics
   async getAnalytics(params: { startDate: string; endDate: string; propertyId?: string }) {
     const searchParams = new URLSearchParams({

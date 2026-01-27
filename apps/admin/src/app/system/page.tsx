@@ -40,6 +40,13 @@ interface JobStatus {
   message?: string;
 }
 
+interface ErrorLog {
+  message: string;
+  source: string;
+  timestamp: string;
+  stack?: string;
+}
+
 export default function SystemHealthPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -196,7 +203,7 @@ export default function SystemHealthPage() {
           <h3 className="font-semibold text-gray-900">Recent Errors</h3>
         </div>
         <div className="divide-y">
-          {(health?.recentErrors || mockErrors).map((error, i) => (
+          {((health?.recentErrors || mockErrors) as ErrorLog[]).map((error, i) => (
             <div key={i} className="p-4">
               <div className="flex items-start justify-between">
                 <div>
