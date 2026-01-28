@@ -1,9 +1,8 @@
-import { Suspense } from 'react';
 import { PropertyGrid } from '@/components/property/PropertyGrid';
 import { AdvancedFilters, MobileFiltersModal } from '@/components/search/AdvancedFilters';
 import { SortDropdown } from '@/components/search/SortDropdown';
 import { Pagination } from '@/components/ui/Pagination';
-import { api } from '@/lib/api';
+import * as Track from '@/graphql/services/track';
 import { PropertiesPageClient } from './PropertiesPageClient';
 
 interface SearchParams {
@@ -64,10 +63,22 @@ export default async function PropertiesPage({
   let totalPages = 0;
 
   try {
-    const result = await api.getProperties(params);
-    properties = result.items;
-    total = result.total;
-    totalPages = result.totalPages;
+    // Fetch from Track API directly (same as home page)
+    const page = params.page || 1;
+    const pageSize = params.pageSize || 24;
+    const { units, total: totalUnits } = await Track.getUnits(page, pageSize);
+    const nodes = await Track.getNodes();
+    const nodesMap = new Map(nodes.map((n) => [n.id, n]));
+
+    // Map units to properties with images
+    for (const unit of units) {
+      const images = await Track.getUnitImages(unit.id, 5);
+      const property = Track.mapTrackUnitToProperty(unit, nodesMap.get(unit.nodeId), images);
+      properties.push(property);
+    }
+
+    total = totalUnits;
+    totalPages = Math.ceil(totalUnits / pageSize);
   } catch (error) {
     console.error('Failed to fetch properties:', error);
     // Return empty results on error

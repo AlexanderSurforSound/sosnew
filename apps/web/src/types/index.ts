@@ -101,13 +101,22 @@ export interface AvailabilityDate {
 
 export interface Pricing {
   nights: number;
+  weeks: number;
   baseRate: number;
   accommodationTotal: number;
+  // Fees from Track PMS
+  homeServiceFee: number; // Cleaning fee
+  petFee?: number; // Per week if pets
+  poolHeat?: number; // Per week if selected
+  travelInsurance?: number; // Optional insurance
+  damageWaiver?: number; // Stay Secure Deposit / VRPPP
+  convenienceFee?: number; // Credit card / debit / mail fee
+  taxes: number;
+  subtotal: number;
+  total: number;
+  // Legacy fields for compatibility
   cleaningFee: number;
   serviceFee: number;
-  taxes: number;
-  total: number;
-  deposit?: number;
 }
 
 // Reservation Types
