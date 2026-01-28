@@ -16,6 +16,7 @@ import partner from './partner'
 import siteSettings from './siteSettings'
 import charge from './charge'
 import newsletter from './newsletter'
+import leaseAgreement from './leaseAgreement'
 
 // Page-specific content
 import homePage from './homePage'
@@ -55,6 +56,7 @@ export const schemaTypes = [
   staffMember,
   partner,
   charge,
+  leaseAgreement,
 
   // Page content (singleton documents)
   homePage,

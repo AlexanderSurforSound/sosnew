@@ -16,6 +16,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { api } from '@/lib/api';
+import { getActiveLeaseAgreement } from '@/lib/sanity';
 import { useBookingStore } from '@/stores/bookingStore';
 import { useAuth } from '@/hooks/useAuth';
 import { DateSelection } from '@/components/booking/DateSelection';
@@ -58,7 +59,10 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
 
   // Agreement state
   const [signature, setSignature] = useState<string | null>(null);
+  const [sectionInitials, setSectionInitials] = useState<Record<string, string>>({});
   const [agreedAddendums, setAgreedAddendums] = useState<string[]>([]);
+  const [agreementSignedAt, setAgreementSignedAt] = useState<string | null>(null);
+  const [cmsLease, setCmsLease] = useState<any>(null);
 
   const {
     property,
@@ -110,6 +114,13 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
     }
   }, [user, guestInfo.email, setGuestInfo]);
 
+  // Fetch CMS lease agreement
+  useEffect(() => {
+    getActiveLeaseAgreement('all')
+      .then(setCmsLease)
+      .catch((err) => console.error('Failed to fetch lease:', err));
+  }, []);
+
   const handlePaymentSubmit = async (paymentToken: string) => {
     if (!property || !checkIn || !checkOut || !pricing) return;
 
@@ -132,8 +143,9 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
         } : undefined,
         agreement: {
           signature: signature!,
+          sectionInitials,
           agreedAddendums,
-          signedAt: new Date().toISOString(),
+          signedAt: agreementSignedAt || new Date().toISOString(),
         },
         payment: {
           token: paymentToken,
@@ -327,17 +339,13 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                       state: guestInfo.address?.state,
                       zip: guestInfo.address?.zip,
                     }}
-                    addendums={guests.pets > 0 ? undefined : [
-                      {
-                        id: 'pool-rules',
-                        title: 'Pool/Hot Tub Rules',
-                        content: 'Pool rules content...',
-                        required: property.amenities?.some(a => a.id === 'pool' || a.id === 'hot-tub') || false,
-                      },
-                    ]}
-                    onComplete={(sig, addendumIds) => {
-                      setSignature(sig);
-                      setAgreedAddendums(addendumIds);
+                    cmsLease={cmsLease}
+                    propertyAmenities={property.amenities?.map(a => a.id) || []}
+                    onComplete={(data) => {
+                      setSignature(data.signature);
+                      setSectionInitials(data.sectionInitials);
+                      setAgreedAddendums(data.agreedAddendums);
+                      setAgreementSignedAt(data.signedAt);
                       goNext();
                     }}
                     onBack={goBack}

@@ -15,8 +15,9 @@ import type {
 } from '@/types';
 import { REAL_PROPERTIES, REAL_FEATURED_PROPERTIES, getRealProperty, searchRealProperties } from './realProperties';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
-const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
+// Use mock data by default unless a real API URL is configured
+const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA !== 'false' && !process.env.NEXT_PUBLIC_API_URL;
 
 class ApiError extends Error {
   constructor(

@@ -100,3 +100,63 @@ export async function getAllSettings() {
     "searchPageSettings": *[_type == "searchPageSettings"][0]
   }`)
 }
+
+// Fetch the active lease agreement
+export async function getActiveLeaseAgreement(reservationType: 'standard' | 'advance' | 'all' = 'all') {
+  return sanityClient.fetch(
+    `*[_type == "leaseAgreement" && isActive == true && (reservationType == $reservationType || reservationType == "all")] | order(effectiveDate desc)[0]{
+      _id,
+      title,
+      effectiveDate,
+      reservationType,
+      headerText,
+      sections[]{
+        name,
+        title,
+        content,
+        requiresInitials,
+        isTextFragment
+      },
+      addendums[]{
+        id,
+        title,
+        content,
+        required,
+        appliesTo
+      },
+      consumerDisclosure,
+      signatureText
+    }`,
+    { reservationType }
+  )
+}
+
+// Fetch lease by effective date (for historical lookups)
+export async function getLeaseByDate(date: string) {
+  return sanityClient.fetch(
+    `*[_type == "leaseAgreement" && effectiveDate <= $date] | order(effectiveDate desc)[0]{
+      _id,
+      title,
+      effectiveDate,
+      reservationType,
+      headerText,
+      sections[]{
+        name,
+        title,
+        content,
+        requiresInitials,
+        isTextFragment
+      },
+      addendums[]{
+        id,
+        title,
+        content,
+        required,
+        appliesTo
+      },
+      consumerDisclosure,
+      signatureText
+    }`,
+    { date }
+  )
+}

@@ -59,8 +59,19 @@ export default async function PropertiesPage({
       | undefined,
   };
 
-  const result = await api.getProperties(params);
-  const { items: properties, total, totalPages } = result;
+  let properties: any[] = [];
+  let total = 0;
+  let totalPages = 0;
+
+  try {
+    const result = await api.getProperties(params);
+    properties = result.items;
+    total = result.total;
+    totalPages = result.totalPages;
+  } catch (error) {
+    console.error('Failed to fetch properties:', error);
+    // Return empty results on error
+  }
 
   // Check if there's an AI search query
   const aiSearchQuery = searchParams.aiSearch || searchParams.q;

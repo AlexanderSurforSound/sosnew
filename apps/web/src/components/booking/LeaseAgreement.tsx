@@ -16,9 +16,39 @@ import {
   Users,
   Home,
   DollarSign,
+  Edit3,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import SignaturePad from 'signature_pad';
+import { PortableText } from '@portabletext/react';
+
+// Types for CMS content
+interface LeaseSection {
+  name: string;
+  title: string;
+  content: any; // Portable Text content
+  requiresInitials: boolean;
+  isTextFragment: boolean;
+}
+
+interface Addendum {
+  id: string;
+  title: string;
+  content: any; // Portable Text content or string
+  required: boolean;
+  appliesTo?: string[];
+}
+
+interface CMSLeaseAgreement {
+  _id: string;
+  title: string;
+  effectiveDate: string;
+  headerText?: string;
+  sections: LeaseSection[];
+  addendums: Addendum[];
+  consumerDisclosure?: any;
+  signatureText?: string;
+}
 
 interface LeaseAgreementProps {
   propertyName: string;
@@ -37,17 +67,76 @@ interface LeaseAgreementProps {
     state?: string;
     zip?: string;
   };
-  addendums?: Addendum[];
-  onComplete: (signature: string, agreedAddendums: string[]) => void;
+  cmsLease?: CMSLeaseAgreement | null;
+  propertyAmenities?: string[]; // For determining which addendums apply
+  onComplete: (data: {
+    signature: string;
+    sectionInitials: Record<string, string>;
+    agreedAddendums: string[];
+    signedAt: string;
+  }) => void;
   onBack: () => void;
 }
 
-interface Addendum {
-  id: string;
-  title: string;
-  content: string;
-  required: boolean;
-}
+// Default sections for fallback when CMS content isn't available
+const defaultSections: LeaseSection[] = [
+  {
+    name: 'property',
+    title: '1. PROPERTY',
+    content: null, // Will be rendered dynamically
+    requiresInitials: true,
+    isTextFragment: false,
+  },
+  {
+    name: 'rental-period',
+    title: '2. RENTAL PERIOD',
+    content: null,
+    requiresInitials: true,
+    isTextFragment: false,
+  },
+  {
+    name: 'payment',
+    title: '3. RENTAL RATE AND PAYMENT',
+    content: null,
+    requiresInitials: true,
+    isTextFragment: false,
+  },
+  {
+    name: 'security-deposit',
+    title: '4. SECURITY DEPOSIT',
+    content: null,
+    requiresInitials: true,
+    isTextFragment: false,
+  },
+  {
+    name: 'occupancy',
+    title: '5. OCCUPANCY',
+    content: null,
+    requiresInitials: true,
+    isTextFragment: false,
+  },
+  {
+    name: 'cancellation',
+    title: '6. CANCELLATION POLICY',
+    content: null,
+    requiresInitials: true,
+    isTextFragment: false,
+  },
+  {
+    name: 'house-rules',
+    title: '7. HOUSE RULES',
+    content: null,
+    requiresInitials: true,
+    isTextFragment: false,
+  },
+  {
+    name: 'liability',
+    title: '8. LIABILITY',
+    content: null,
+    requiresInitials: true,
+    isTextFragment: false,
+  },
+];
 
 const defaultAddendums: Addendum[] = [
   {
@@ -61,18 +150,15 @@ const defaultAddendums: Addendum[] = [
 
 3. PET AREAS: Pets must be kept off all furniture and beds. Pet beds or blankets must be used. Pets are not permitted in the pool area.
 
-4. WASTE DISPOSAL: Pet waste must be immediately picked up and properly disposed of in outdoor trash receptacles. Failure to do so may result in additional cleaning fees.
+4. WASTE DISPOSAL: Pet waste must be immediately picked up and properly disposed of in outdoor trash receptacles.
 
-5. SUPERVISION: Pets must be supervised at all times and must not be left unattended in the property. Pets left alone may trigger noise complaints.
+5. SUPERVISION: Pets must be supervised at all times and must not be left unattended in the property.
 
-6. DAMAGES: Guest is fully responsible for any damages caused by pets, including but not limited to: furniture damage, carpet stains, scratches, odors, and flea treatments.
+6. DAMAGES: Guest is fully responsible for any damages caused by pets.
 
-7. BREED RESTRICTIONS: Certain breeds may not be permitted as determined by insurance requirements. Please verify your pet is allowed before booking.
-
-8. BARKING/NOISE: Excessive barking or noise complaints may result in immediate termination of the rental agreement without refund.
-
-By signing below, you acknowledge and agree to all terms of this Pet Policy Addendum.`,
+By initialing below, you acknowledge and agree to all terms of this Pet Policy Addendum.`,
     required: true,
+    appliesTo: ['pets'],
   },
   {
     id: 'pool-rules',
@@ -81,46 +167,19 @@ By signing below, you acknowledge and agree to all terms of this Pet Policy Adde
 
 1. NO LIFEGUARD ON DUTY: Swimming is at your own risk. Children must be supervised by an adult at all times.
 
-2. POOL HOURS: Pool/hot tub may be used between 8:00 AM and 10:00 PM. Please be respectful of neighbors.
+2. POOL HOURS: Pool/hot tub may be used between 8:00 AM and 10:00 PM.
 
 3. POOL GATE: The pool gate must remain closed and latched at all times when the pool is not in use.
 
 4. NO GLASS: No glass containers of any kind are permitted in the pool area.
 
-5. NO DIVING: Diving is strictly prohibited. Pool depth may not be suitable for diving.
+5. NO DIVING: Diving is strictly prohibited.
 
-6. HOT TUB TEMPERATURE: The hot tub is maintained at safe temperatures. Do not attempt to adjust heating beyond 104°F.
+6. LIABILITY: Guest assumes all risks associated with pool/hot tub use.
 
-7. HEALTH ADVISORY: Persons with heart conditions, pregnant women, and small children should consult a physician before using the hot tub.
-
-8. NO PETS: Pets are not permitted in the pool or hot tub area.
-
-9. POOL FURNITURE: Please return all pool furniture to its proper location after use.
-
-10. LIABILITY: Guest assumes all risks associated with pool/hot tub use. Owner is not responsible for injuries.
-
-By signing below, you acknowledge and agree to all Pool/Hot Tub Rules.`,
+By initialing below, you acknowledge and agree to all Pool/Hot Tub Rules.`,
     required: true,
-  },
-  {
-    id: 'parking',
-    title: 'Parking Agreement',
-    content: `PARKING AGREEMENT
-
-1. DESIGNATED SPACES: Guests may only park in designated parking areas for this property. Do not park on grass, neighboring properties, or block driveways.
-
-2. VEHICLE LIMIT: Maximum of [X] vehicles permitted. Additional vehicles must be approved in advance.
-
-3. BOAT/TRAILER PARKING: Boats, trailers, RVs, and oversized vehicles require prior approval and may incur additional fees.
-
-4. NO REPAIRS: Vehicle repairs, oil changes, or car washing is not permitted on the property.
-
-5. TOWING: Vehicles parked in unauthorized areas or blocking access may be towed at owner's expense.
-
-6. LIABILITY: Owner is not responsible for damage, theft, or loss to vehicles or their contents.
-
-By signing below, you acknowledge and agree to the Parking Agreement.`,
-    required: false,
+    appliesTo: ['pool', 'hotTub'],
   },
 ];
 
@@ -132,17 +191,37 @@ export function LeaseAgreement({
   guests,
   totalAmount,
   guestInfo,
-  addendums = defaultAddendums,
+  cmsLease,
+  propertyAmenities = [],
   onComplete,
   onBack,
 }: LeaseAgreementProps) {
+  // Use CMS content or fallback to defaults
+  const sections = cmsLease?.sections?.length ? cmsLease.sections : defaultSections;
+  const addendums = cmsLease?.addendums?.length ? cmsLease.addendums : defaultAddendums;
+
+  // Filter addendums based on property amenities and booking details
+  const applicableAddendums = addendums.filter((addendum) => {
+    if (!addendum.appliesTo || addendum.appliesTo.includes('all')) return true;
+    if (addendum.appliesTo.includes('pets') && guests.pets > 0) return true;
+    if (addendum.appliesTo.includes('pool') && propertyAmenities.includes('pool')) return true;
+    if (addendum.appliesTo.includes('hotTub') && propertyAmenities.includes('hotTub')) return true;
+    return false;
+  });
+
   const [hasReadAgreement, setHasReadAgreement] = useState(false);
   const [signature, setSignature] = useState<string | null>(null);
+  const [sectionInitials, setSectionInitials] = useState<Record<string, string>>({});
   const [agreedAddendums, setAgreedAddendums] = useState<Set<string>>(new Set());
+  const [addendumInitials, setAddendumInitials] = useState<Record<string, string>>({});
   const [expandedAddendum, setExpandedAddendum] = useState<string | null>(null);
   const [showSignaturePad, setShowSignaturePad] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeInitialSection, setActiveInitialSection] = useState<string | null>(null);
   const agreementRef = useRef<HTMLDivElement>(null);
+
+  const guestInitials = `${guestInfo.firstName.charAt(0)}${guestInfo.lastName.charAt(0)}`.toUpperCase();
+  const guestName = `${guestInfo.firstName} ${guestInfo.lastName}`;
 
   // Track scroll progress
   useEffect(() => {
@@ -163,6 +242,20 @@ export function LeaseAgreement({
     return () => element.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleInitialChange = (sectionName: string, value: string) => {
+    setSectionInitials((prev) => ({
+      ...prev,
+      [sectionName]: value.toUpperCase().slice(0, 3),
+    }));
+  };
+
+  const handleAddendumInitialChange = (addendumId: string, value: string) => {
+    setAddendumInitials((prev) => ({
+      ...prev,
+      [addendumId]: value.toUpperCase().slice(0, 3),
+    }));
+  };
+
   const toggleAddendum = (addendumId: string) => {
     const newAgreed = new Set(agreedAddendums);
     if (newAgreed.has(addendumId)) {
@@ -173,28 +266,137 @@ export function LeaseAgreement({
     setAgreedAddendums(newAgreed);
   };
 
-  const requiredAddendums = addendums.filter((a) => a.required);
-  const optionalAddendums = addendums.filter((a) => !a.required);
-  const allRequiredAgreed = requiredAddendums.every((a) => agreedAddendums.has(a.id));
+  // Check if all required sections are initialed
+  const sectionsRequiringInitials = sections.filter((s) => s.requiresInitials && !s.isTextFragment);
+  const allSectionsInitialed = sectionsRequiringInitials.every(
+    (section) => sectionInitials[section.name]?.length >= 2
+  );
 
-  const canSubmit = hasReadAgreement && signature && allRequiredAgreed;
+  // Check addendums
+  const requiredAddendums = applicableAddendums.filter((a) => a.required);
+  const allRequiredAddendumsAgreed = requiredAddendums.every(
+    (a) => agreedAddendums.has(a.id) && addendumInitials[a.id]?.length >= 2
+  );
+
+  const canSubmit = hasReadAgreement && signature && allSectionsInitialed && allRequiredAddendumsAgreed;
 
   const handleSubmit = () => {
     if (!canSubmit || !signature) return;
-    onComplete(signature, Array.from(agreedAddendums));
+    onComplete({
+      signature,
+      sectionInitials: { ...sectionInitials, ...addendumInitials },
+      agreedAddendums: Array.from(agreedAddendums),
+      signedAt: new Date().toISOString(),
+    });
   };
 
   const todayDate = format(new Date(), 'MMMM d, yyyy');
   const checkInDate = format(new Date(checkIn), 'MMMM d, yyyy');
   const checkOutDate = format(new Date(checkOut), 'MMMM d, yyyy');
-  const guestName = `${guestInfo.firstName} ${guestInfo.lastName}`;
+
+  // Render default section content when CMS content isn't available
+  const renderDefaultSectionContent = (section: LeaseSection) => {
+    switch (section.name) {
+      case 'property':
+        return (
+          <p>
+            Owner/Agent agrees to rent to Tenant the vacation rental property located at:
+            <br />
+            <strong>{propertyName}</strong>
+            <br />
+            {propertyAddress}
+          </p>
+        );
+      case 'rental-period':
+        return (
+          <>
+            <p>
+              The rental period shall begin on <strong>{checkInDate}</strong> at 4:00 PM and end on{' '}
+              <strong>{checkOutDate}</strong> at 10:00 AM.
+            </p>
+            <p>
+              <strong>CHECK-IN:</strong> After 4:00 PM on arrival date
+              <br />
+              <strong>CHECK-OUT:</strong> Before 10:00 AM on departure date
+            </p>
+          </>
+        );
+      case 'payment':
+        return (
+          <p>
+            Tenant agrees to pay Owner/Agent the total rental amount of{' '}
+            <strong>${totalAmount.toLocaleString()}</strong> according to the payment schedule agreed upon at
+            booking.
+          </p>
+        );
+      case 'security-deposit':
+        return (
+          <p>
+            A security deposit or damage protection fee has been collected. Tenant is responsible for any
+            damages exceeding this amount. The security deposit will be returned within 14 days of
+            check-out, minus any deductions for damages or excessive cleaning.
+          </p>
+        );
+      case 'occupancy':
+        return (
+          <>
+            <p>
+              The maximum number of occupants shall not exceed the number registered at booking:
+              <br />
+              <strong>Adults:</strong> {guests.adults}
+              <br />
+              <strong>Children:</strong> {guests.children}
+              <br />
+              <strong>Pets:</strong> {guests.pets}
+            </p>
+            <p>
+              No parties, events, or gatherings exceeding the registered occupancy are permitted.
+            </p>
+          </>
+        );
+      case 'cancellation':
+        return (
+          <p>
+            Cancellations made more than 30 days prior to check-in: Full refund minus processing fee.
+            <br />
+            Cancellations made 15-30 days prior: 50% refund.
+            <br />
+            Cancellations made less than 15 days prior: No refund.
+            <br />
+            <br />
+            Travel insurance is strongly recommended.
+          </p>
+        );
+      case 'house-rules':
+        return (
+          <ul className="list-disc pl-5 space-y-1">
+            <li>No smoking in the property or on decks. Violation fee: $500</li>
+            <li>No illegal activities</li>
+            <li>Noise levels must be reasonable, especially after 10:00 PM</li>
+            <li>Garbage must be placed in designated containers</li>
+            <li>All doors and windows must be secured when leaving the property</li>
+            <li>Report any maintenance issues immediately</li>
+          </ul>
+        );
+      case 'liability':
+        return (
+          <p>
+            Tenant agrees to hold Owner/Agent harmless from any liability, claims, or demands arising
+            from Tenant&apos;s use of the premises. Owner/Agent is not responsible for any accidents, injuries,
+            or illness that occur on the premises or while using any equipment or amenities.
+          </p>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold mb-2">Rental Agreement</h2>
         <p className="text-gray-500">
-          Please read and sign the rental agreement to complete your booking
+          Please read and initial each section, then sign the rental agreement to complete your booking
         </p>
       </div>
 
@@ -226,6 +428,34 @@ export function LeaseAgreement({
         </div>
       </div>
 
+      {/* Progress indicators */}
+      <div className="flex items-center gap-4 text-sm">
+        <div className="flex items-center gap-2">
+          <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+            hasReadAgreement ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
+          }`}>
+            {hasReadAgreement ? <Check className="w-3 h-3" /> : '1'}
+          </div>
+          <span className={hasReadAgreement ? 'text-green-600' : 'text-gray-500'}>Read Agreement</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+            allSectionsInitialed ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
+          }`}>
+            {allSectionsInitialed ? <Check className="w-3 h-3" /> : '2'}
+          </div>
+          <span className={allSectionsInitialed ? 'text-green-600' : 'text-gray-500'}>Initial Sections</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+            signature ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
+          }`}>
+            {signature ? <Check className="w-3 h-3" /> : '3'}
+          </div>
+          <span className={signature ? 'text-green-600' : 'text-gray-500'}>Sign</span>
+        </div>
+      </div>
+
       {/* Scroll Progress */}
       <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
         <div
@@ -234,122 +464,72 @@ export function LeaseAgreement({
         />
       </div>
 
-      {/* Main Agreement */}
+      {/* Main Agreement with Section Initials */}
       <div
         ref={agreementRef}
-        className="h-96 overflow-y-auto border rounded-xl p-6 bg-white prose prose-sm max-w-none"
+        className="h-[500px] overflow-y-auto border rounded-xl bg-white"
       >
-        <div className="text-center mb-6">
-          <h1 className="text-xl font-bold">VACATION RENTAL AGREEMENT</h1>
-          <p className="text-gray-500">Surf or Sound Realty</p>
-        </div>
+        <div className="p-6 prose prose-sm max-w-none">
+          <div className="text-center mb-6">
+            <h1 className="text-xl font-bold">VACATION RENTAL AGREEMENT</h1>
+            <p className="text-gray-500">Surf or Sound Realty</p>
+            {cmsLease?.headerText && <p className="text-sm">{cmsLease.headerText}</p>}
+          </div>
 
-        <p>
-          This Vacation Rental Agreement ("Agreement") is entered into as of <strong>{todayDate}</strong> by
-          and between:
-        </p>
-
-        <p>
-          <strong>OWNER/AGENT:</strong> Surf or Sound Realty, LLC<br />
-          <strong>TENANT:</strong> {guestName}
-        </p>
-
-        <h2>1. PROPERTY</h2>
-        <p>
-          Owner/Agent agrees to rent to Tenant the vacation rental property located at:
-          <br />
-          <strong>{propertyName}</strong>
-          <br />
-          {propertyAddress}
-        </p>
-
-        <h2>2. RENTAL PERIOD</h2>
-        <p>
-          The rental period shall begin on <strong>{checkInDate}</strong> at 4:00 PM and end on{' '}
-          <strong>{checkOutDate}</strong> at 10:00 AM.
-        </p>
-        <p>
-          <strong>CHECK-IN:</strong> After 4:00 PM on arrival date
-          <br />
-          <strong>CHECK-OUT:</strong> Before 10:00 AM on departure date
-        </p>
-
-        <h2>3. RENTAL RATE AND PAYMENT</h2>
-        <p>
-          Tenant agrees to pay Owner/Agent the total rental amount of{' '}
-          <strong>${totalAmount.toLocaleString()}</strong> according to the payment schedule agreed upon at
-          booking.
-        </p>
-
-        <h2>4. SECURITY DEPOSIT</h2>
-        <p>
-          A security deposit or damage protection fee has been collected. Tenant is responsible for any
-          damages exceeding this amount. The security deposit will be returned within 14 days of
-          check-out, minus any deductions for damages or excessive cleaning.
-        </p>
-
-        <h2>5. OCCUPANCY</h2>
-        <p>
-          The maximum number of occupants shall not exceed the number registered at booking:
-          <br />
-          <strong>Adults:</strong> {guests.adults}
-          <br />
-          <strong>Children:</strong> {guests.children}
-          <br />
-          <strong>Pets:</strong> {guests.pets}
-        </p>
-        <p>
-          No parties, events, or gatherings exceeding the registered occupancy are permitted. Violation
-          may result in immediate termination without refund.
-        </p>
-
-        <h2>6. CANCELLATION POLICY</h2>
-        <p>
-          Cancellations made more than 30 days prior to check-in: Full refund minus processing fee.
-          <br />
-          Cancellations made 15-30 days prior: 50% refund.
-          <br />
-          Cancellations made less than 15 days prior: No refund.
-          <br />
-          <br />
-          Travel insurance is strongly recommended.
-        </p>
-
-        <h2>7. HOUSE RULES</h2>
-        <ul>
-          <li>No smoking in the property or on decks. Violation fee: $500</li>
-          <li>No illegal activities</li>
-          <li>Noise levels must be reasonable, especially after 10:00 PM</li>
-          <li>Garbage must be placed in designated containers</li>
-          <li>All doors and windows must be secured when leaving the property</li>
-          <li>Report any maintenance issues immediately</li>
-        </ul>
-
-        <h2>8. LIABILITY</h2>
-        <p>
-          Tenant agrees to hold Owner/Agent harmless from any liability, claims, or demands arising
-          from Tenant's use of the premises. Owner/Agent is not responsible for any accidents, injuries,
-          or illness that occur on the premises or while using any equipment or amenities.
-        </p>
-
-        <h2>9. MAINTENANCE AND REPAIRS</h2>
-        <p>
-          Tenant shall immediately report any malfunctions, damage, or needed repairs to Owner/Agent.
-          Tenant shall not attempt repairs. Owner/Agent will make reasonable efforts to address issues
-          promptly but is not responsible for temporary outages of utilities or amenities.
-        </p>
-
-        <h2>10. GOVERNING LAW</h2>
-        <p>
-          This Agreement shall be governed by and construed in accordance with the laws of the State of
-          North Carolina.
-        </p>
-
-        <div className="mt-8 pt-8 border-t text-center text-gray-500">
           <p>
-            By signing below, Tenant acknowledges having read this Agreement and agrees to all terms
-            and conditions contained herein.
+            This Vacation Rental Agreement (&quot;Agreement&quot;) is entered into as of <strong>{todayDate}</strong> by
+            and between:
           </p>
+
+          <p>
+            <strong>OWNER/AGENT:</strong> Surf or Sound Realty, LLC<br />
+            <strong>TENANT:</strong> {guestName}
+          </p>
+
+          {/* Render each section with initials */}
+          {sections.map((section) => (
+            <div key={section.name} className="relative border-l-4 border-gray-200 pl-4 my-6 py-2 hover:border-ocean-300 transition-colors">
+              <h2 className="text-base font-bold mt-0">{section.title}</h2>
+
+              {section.content ? (
+                <div className="prose prose-sm">
+                  <PortableText value={section.content} />
+                </div>
+              ) : (
+                renderDefaultSectionContent(section)
+              )}
+
+              {section.requiresInitials && !section.isTextFragment && (
+                <div className="mt-4 flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                  <span className="text-sm text-gray-600">Initial here:</span>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={sectionInitials[section.name] || ''}
+                      onChange={(e) => handleInitialChange(section.name, e.target.value)}
+                      placeholder={guestInitials}
+                      maxLength={3}
+                      className={`w-16 h-10 text-center text-lg font-semibold border-2 rounded-lg uppercase tracking-wide ${
+                        sectionInitials[section.name]?.length >= 2
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-gray-300 focus:border-ocean-500'
+                      } focus:outline-none transition-colors`}
+                    />
+                    {sectionInitials[section.name]?.length >= 2 && (
+                      <Check className="absolute -right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+
+          <div className="mt-8 pt-8 border-t text-center text-gray-500">
+            <p>
+              {cmsLease?.signatureText ||
+                'By signing below, Tenant acknowledges having read this Agreement and agrees to all terms and conditions contained herein.'}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -360,46 +540,53 @@ export function LeaseAgreement({
         </div>
       )}
 
+      {/* Section Initials Summary */}
+      <div className="bg-gray-50 rounded-xl p-4">
+        <h3 className="font-semibold mb-3 flex items-center gap-2">
+          <Edit3 className="w-5 h-5" />
+          Section Initials ({Object.keys(sectionInitials).filter(k => sectionInitials[k]?.length >= 2).length} of {sectionsRequiringInitials.length})
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {sectionsRequiringInitials.map((section) => (
+            <div
+              key={section.name}
+              className={`px-3 py-1.5 rounded-lg text-sm flex items-center gap-2 ${
+                sectionInitials[section.name]?.length >= 2
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-gray-200 text-gray-600'
+              }`}
+            >
+              {sectionInitials[section.name]?.length >= 2 ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <span className="w-4 h-4 rounded-full border-2 border-current" />
+              )}
+              {section.title.split('.')[0]}
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Addendums */}
-      {addendums.length > 0 && (
+      {applicableAddendums.length > 0 && (
         <div className="space-y-3">
           <h3 className="font-semibold">Additional Terms & Addendums</h3>
 
-          {requiredAddendums.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-sm text-gray-500">Required:</p>
-              {requiredAddendums.map((addendum) => (
-                <AddendumItem
-                  key={addendum.id}
-                  addendum={addendum}
-                  isAgreed={agreedAddendums.has(addendum.id)}
-                  isExpanded={expandedAddendum === addendum.id}
-                  onToggle={() => toggleAddendum(addendum.id)}
-                  onExpand={() =>
-                    setExpandedAddendum(expandedAddendum === addendum.id ? null : addendum.id)
-                  }
-                />
-              ))}
-            </div>
-          )}
-
-          {optionalAddendums.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-sm text-gray-500">Optional:</p>
-              {optionalAddendums.map((addendum) => (
-                <AddendumItem
-                  key={addendum.id}
-                  addendum={addendum}
-                  isAgreed={agreedAddendums.has(addendum.id)}
-                  isExpanded={expandedAddendum === addendum.id}
-                  onToggle={() => toggleAddendum(addendum.id)}
-                  onExpand={() =>
-                    setExpandedAddendum(expandedAddendum === addendum.id ? null : addendum.id)
-                  }
-                />
-              ))}
-            </div>
-          )}
+          {applicableAddendums.map((addendum) => (
+            <AddendumItem
+              key={addendum.id}
+              addendum={addendum}
+              isAgreed={agreedAddendums.has(addendum.id)}
+              isExpanded={expandedAddendum === addendum.id}
+              initials={addendumInitials[addendum.id] || ''}
+              defaultInitials={guestInitials}
+              onToggle={() => toggleAddendum(addendum.id)}
+              onExpand={() =>
+                setExpandedAddendum(expandedAddendum === addendum.id ? null : addendum.id)
+              }
+              onInitialChange={(value) => handleAddendumInitialChange(addendum.id, value)}
+            />
+          ))}
         </div>
       )}
 
@@ -429,10 +616,14 @@ export function LeaseAgreement({
         ) : (
           <button
             onClick={() => setShowSignaturePad(true)}
-            disabled={!hasReadAgreement}
+            disabled={!hasReadAgreement || !allSectionsInitialed}
             className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-ocean-500 hover:text-ocean-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Click to sign
+            {!hasReadAgreement
+              ? 'Read the full agreement first'
+              : !allSectionsInitialed
+                ? 'Initial all sections first'
+                : 'Click to sign'}
           </button>
         )}
 
@@ -489,19 +680,27 @@ function AddendumItem({
   addendum,
   isAgreed,
   isExpanded,
+  initials,
+  defaultInitials,
   onToggle,
   onExpand,
+  onInitialChange,
 }: {
   addendum: Addendum;
   isAgreed: boolean;
   isExpanded: boolean;
+  initials: string;
+  defaultInitials: string;
   onToggle: () => void;
   onExpand: () => void;
+  onInitialChange: (value: string) => void;
 }) {
+  const isComplete = isAgreed && initials.length >= 2;
+
   return (
     <div
       className={`border rounded-lg overflow-hidden transition-colors ${
-        isAgreed ? 'border-green-300 bg-green-50' : 'border-gray-200 bg-white'
+        isComplete ? 'border-green-300 bg-green-50' : 'border-gray-200 bg-white'
       }`}
     >
       <div className="flex items-center justify-between p-4">
@@ -522,16 +721,30 @@ function AddendumItem({
             }`}
           />
         </button>
-        <button
-          onClick={onToggle}
-          className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
-            isAgreed
-              ? 'bg-green-500 border-green-500 text-white'
-              : 'border-gray-300 hover:border-gray-400'
-          }`}
-        >
-          {isAgreed && <Check className="w-4 h-4" />}
-        </button>
+        <div className="flex items-center gap-3">
+          <input
+            type="text"
+            value={initials}
+            onChange={(e) => onInitialChange(e.target.value)}
+            placeholder={defaultInitials}
+            maxLength={3}
+            className={`w-14 h-8 text-center text-sm font-semibold border-2 rounded uppercase ${
+              initials.length >= 2
+                ? 'border-green-500 bg-green-50'
+                : 'border-gray-300'
+            } focus:outline-none focus:border-ocean-500`}
+          />
+          <button
+            onClick={onToggle}
+            className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
+              isAgreed
+                ? 'bg-green-500 border-green-500 text-white'
+                : 'border-gray-300 hover:border-gray-400'
+            }`}
+          >
+            {isAgreed && <Check className="w-4 h-4" />}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -543,9 +756,15 @@ function AddendumItem({
             className="overflow-hidden"
           >
             <div className="px-4 pb-4">
-              <pre className="text-sm text-gray-600 whitespace-pre-wrap font-sans bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto">
-                {addendum.content}
-              </pre>
+              {typeof addendum.content === 'string' ? (
+                <pre className="text-sm text-gray-600 whitespace-pre-wrap font-sans bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto">
+                  {addendum.content}
+                </pre>
+              ) : (
+                <div className="prose prose-sm bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto">
+                  <PortableText value={addendum.content} />
+                </div>
+              )}
             </div>
           </motion.div>
         )}
