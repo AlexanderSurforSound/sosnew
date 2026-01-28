@@ -16,9 +16,7 @@ import {
   Home,
   Calendar,
   HelpCircle,
-  Store,
   Key,
-  Users,
 } from 'lucide-react';
 
 const faqs = [
@@ -72,7 +70,6 @@ const topics = [
   { value: 'booking', label: 'Booking Inquiry', icon: Calendar },
   { value: 'property', label: 'Property Question', icon: Home },
   { value: 'support', label: 'Guest Support', icon: Headphones },
-  { value: 'marketplace', label: 'Marketplace Vendor', icon: Store },
   { value: 'owners', label: 'Property Owner', icon: Key },
   { value: 'other', label: 'Other', icon: HelpCircle },
 ];
@@ -84,12 +81,6 @@ const subjectConfigs: Record<string, {
   topic: string;
   placeholder: string;
 }> = {
-  marketplace: {
-    title: 'Partner with Surf or Sound',
-    subtitle: 'Interested in listing your business in our marketplace? We\'d love to hear from you.',
-    topic: 'marketplace',
-    placeholder: 'Tell us about your business and how you\'d like to partner with us...',
-  },
   owners: {
     title: 'List Your Property',
     subtitle: 'Maximize your rental income with the Outer Banks\' premier property management company.',
@@ -140,9 +131,7 @@ export default function ContactPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
       <div className={`text-white ${
-        subject === 'marketplace'
-          ? 'bg-gradient-to-r from-amber-600 to-orange-600'
-          : subject === 'owners'
+        subject === 'owners'
           ? 'bg-gradient-to-r from-emerald-600 to-teal-600'
           : 'bg-gradient-to-r from-ocean-600 to-ocean-700'
       }`}>
@@ -152,12 +141,6 @@ export default function ContactPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center"
           >
-            {subject === 'marketplace' && (
-              <div className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1.5 mb-4">
-                <Store className="w-4 h-4" />
-                <span className="text-sm font-medium">Marketplace Partnership</span>
-              </div>
-            )}
             {subject === 'owners' && (
               <div className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1.5 mb-4">
                 <Key className="w-4 h-4" />

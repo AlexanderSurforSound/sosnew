@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import {
   MapPin,
   Star,
-  Shield,
   Phone,
   Waves,
   Heart,
@@ -93,11 +92,6 @@ const villages = [
 ];
 
 const features = [
-  {
-    icon: Shield,
-    title: 'Book Direct & Save',
-    description: 'No third-party booking fees. What you see is what you pay.',
-  },
   {
     icon: Star,
     title: 'Inspected Properties',

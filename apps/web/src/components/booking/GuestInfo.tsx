@@ -109,7 +109,7 @@ export function GuestInfo({ initialValues, onBack, onComplete, isLoggedIn }: Gue
         <div className="border-t pt-6">
           <h3 className="font-medium mb-4">Home Address (Optional)</h3>
           <p className="text-sm text-gray-500 mb-4">
-            Used for shipping if you order from our marketplace
+            Used for travel insurance or other optional services
           </p>
 
           <div className="mb-4">

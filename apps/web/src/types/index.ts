@@ -2,6 +2,7 @@
 export interface Property {
   id: string;
   trackId: string;
+  houseNumber?: string;
   name: string;
   slug: string;
   headline?: string;
@@ -10,13 +11,17 @@ export interface Property {
   bedrooms: number;
   bathrooms: number;
   sleeps: number;
-  propertyType: string;
+  propertyType?: string;
   images: PropertyImage[];
-  amenities: Amenity[];
+  amenities?: Amenity[];
   petFriendly: boolean;
   featured: boolean;
+  isNew?: boolean;
   baseRate?: number;
   isFavorite?: boolean;
+  latitude?: number | null;
+  longitude?: number | null;
+  streetAddress?: string;
   // Computed/convenience fields
   primaryImage?: string;
   pricePerNight?: number;
@@ -47,7 +52,7 @@ export interface PropertyImage {
 }
 
 export interface Village {
-  id: string;
+  id?: string;
   name: string;
   slug: string;
   description?: string;
@@ -63,7 +68,7 @@ export interface Village {
 export interface Amenity {
   id: string;
   name: string;
-  slug: string;
+  slug?: string;
   category?: string;
   icon?: string;
   description?: string;

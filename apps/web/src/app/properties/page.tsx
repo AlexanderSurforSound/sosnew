@@ -27,7 +27,7 @@ interface SearchParams {
 export const metadata = {
   title: 'Vacation Rentals',
   description:
-    'Browse 600+ vacation rentals on Hatteras Island. Find oceanfront homes, pet-friendly properties, and luxury beach houses.',
+    'Browse vacation rentals on Hatteras Island. Find oceanfront homes, pet-friendly properties, and luxury beach houses.',
 };
 
 export default async function PropertiesPage({

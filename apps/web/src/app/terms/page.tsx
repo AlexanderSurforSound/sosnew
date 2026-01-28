@@ -126,27 +126,44 @@ export default function TermsPage() {
               <li>Violate any applicable laws or regulations</li>
             </ul>
 
-            <h2>11. Dispute Resolution</h2>
+            <h2>11. Data Scraping, Bots, and Automated Access</h2>
+            <p>
+              You expressly agree that you will NOT use any robot, spider, scraper, crawler, bot, data mining tool, or any automated means or interface not provided by us to access our services, extract data, or otherwise collect information from our website. This includes but is not limited to:
+            </p>
+            <ul>
+              <li>Scraping, harvesting, or collecting property listings, pricing data, availability information, images, reviews, or any other content from our website</li>
+              <li>Using automated tools to monitor property availability, pricing changes, or booking status</li>
+              <li>Creating derivative databases or datasets from information obtained from our website</li>
+              <li>Training artificial intelligence or machine learning models using content from our website</li>
+              <li>Reproducing, republishing, or redistributing our property listings or content on other websites or platforms</li>
+              <li>Accessing our website through any automated means at a rate that exceeds reasonable human browsing activity</li>
+              <li>Circumventing any technological measures we use to protect our website and content</li>
+            </ul>
+            <p>
+              We reserve the right to block, restrict, or terminate access to our website for any user or IP address that we believe is engaging in prohibited automated access. We may pursue legal action against any party that violates these terms, including seeking damages and injunctive relief. Violation of this section may also constitute violations of the Computer Fraud and Abuse Act (18 U.S.C. § 1030) and similar state laws.
+            </p>
+
+            <h2>12. Dispute Resolution</h2>
             <p>
               Any disputes arising from these Terms or our services shall be resolved through binding arbitration in Dare County, North Carolina, in accordance with the rules of the American Arbitration Association.
             </p>
 
-            <h2>12. Modifications</h2>
+            <h2>13. Modifications</h2>
             <p>
               We reserve the right to modify these Terms at any time. Changes become effective upon posting to our website. Your continued use of our services after changes constitutes acceptance of the modified terms.
             </p>
 
-            <h2>13. Termination</h2>
+            <h2>14. Termination</h2>
             <p>
               We may terminate or suspend your account and access to our services at our sole discretion, without notice, for conduct that we believe violates these Terms or is harmful to other users or our business.
             </p>
 
-            <h2>14. Governing Law</h2>
+            <h2>15. Governing Law</h2>
             <p>
               These Terms shall be governed by and construed in accordance with the laws of the State of North Carolina, without regard to its conflict of law provisions.
             </p>
 
-            <h2>15. Contact Information</h2>
+            <h2>16. Contact Information</h2>
             <p>For questions about these Terms of Service, please contact us:</p>
             <ul>
               <li>Email: legal@surforsound.com</li>

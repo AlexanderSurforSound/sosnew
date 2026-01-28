@@ -4,8 +4,8 @@ import type { Property, Village, Amenity } from '@surf-or-sound/types';
 export const MOCK_VILLAGES: Village[] = [
   {
     id: '1',
-    name: 'Rodanthe',
-    slug: 'rodanthe',
+    name: 'Rodanthe Village',
+    slug: 'rodanthe-village',
     description: 'Famous for the "Nights in Rodanthe" house and world-class kiteboarding. This charming village offers pristine beaches and stunning sunsets.',
     shortDescription: 'Kiteboarding paradise with iconic beaches',
     heroImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80',
@@ -13,8 +13,8 @@ export const MOCK_VILLAGES: Village[] = [
   },
   {
     id: '2',
-    name: 'Waves',
-    slug: 'waves',
+    name: 'Waves Village',
+    slug: 'waves-village',
     description: 'A small, quiet village perfect for families seeking a peaceful retreat with easy beach access and friendly neighbors.',
     shortDescription: 'Quiet family-friendly retreat',
     heroImage: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1200&q=80',
@@ -22,8 +22,8 @@ export const MOCK_VILLAGES: Village[] = [
   },
   {
     id: '3',
-    name: 'Salvo',
-    slug: 'salvo',
+    name: 'Salvo Village',
+    slug: 'salvo-village',
     description: 'Known for excellent fishing and a laid-back atmosphere. Salvo offers the quintessential Outer Banks experience.',
     shortDescription: 'Laid-back fishing village',
     heroImage: 'https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=1200&q=80',
@@ -31,8 +31,8 @@ export const MOCK_VILLAGES: Village[] = [
   },
   {
     id: '4',
-    name: 'Avon',
-    slug: 'avon',
+    name: 'Avon Village',
+    slug: 'avon-village',
     description: 'The largest village on Hatteras Island with shopping, dining, and beautiful beaches. Perfect for those wanting amenities nearby.',
     shortDescription: 'Shopping, dining & beautiful beaches',
     heroImage: 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1200&q=80',
@@ -40,8 +40,8 @@ export const MOCK_VILLAGES: Village[] = [
   },
   {
     id: '5',
-    name: 'Buxton',
-    slug: 'buxton',
+    name: 'Buxton Village',
+    slug: 'buxton-village',
     description: 'Home to the iconic Cape Hatteras Lighthouse and legendary surf breaks. A must-visit for surfers and history buffs alike.',
     shortDescription: 'Lighthouse views & legendary surfing',
     heroImage: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1200&q=80',
@@ -49,8 +49,8 @@ export const MOCK_VILLAGES: Village[] = [
   },
   {
     id: '6',
-    name: 'Frisco',
-    slug: 'frisco',
+    name: 'Frisco Village',
+    slug: 'frisco-village',
     description: 'A hidden gem with stunning soundside sunsets and access to some of the island\'s best secret beaches.',
     shortDescription: 'Hidden gem with stunning sunsets',
     heroImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80',

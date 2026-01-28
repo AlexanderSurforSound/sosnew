@@ -145,12 +145,12 @@ export function SearchFilters({ currentFilters }: SearchFiltersProps) {
 }
 
 const villages = [
-  { name: 'Rodanthe', slug: 'rodanthe' },
-  { name: 'Waves', slug: 'waves' },
-  { name: 'Salvo', slug: 'salvo' },
-  { name: 'Avon', slug: 'avon' },
-  { name: 'Buxton', slug: 'buxton' },
-  { name: 'Frisco', slug: 'frisco' },
+  { name: 'Rodanthe', slug: 'rodanthe-village' },
+  { name: 'Waves', slug: 'waves-village' },
+  { name: 'Salvo', slug: 'salvo-village' },
+  { name: 'Avon', slug: 'avon-village' },
+  { name: 'Buxton', slug: 'buxton-village' },
+  { name: 'Frisco', slug: 'frisco-village' },
   { name: 'Hatteras Village', slug: 'hatteras-village' },
 ];
 

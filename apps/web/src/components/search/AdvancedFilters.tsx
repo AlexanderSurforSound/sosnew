@@ -29,12 +29,12 @@ interface AdvancedFiltersProps {
 }
 
 const VILLAGES = [
-  { name: 'Rodanthe', slug: 'rodanthe', description: 'Northern gateway, famous from Nights in Rodanthe' },
-  { name: 'Waves', slug: 'waves', description: 'Surf-friendly, laid-back atmosphere' },
-  { name: 'Salvo', slug: 'salvo', description: 'Quiet and family-friendly' },
-  { name: 'Avon', slug: 'avon', description: 'Central location with shops & dining' },
-  { name: 'Buxton', slug: 'buxton', description: 'Near Cape Hatteras Lighthouse' },
-  { name: 'Frisco', slug: 'frisco', description: 'Secluded beaches, great fishing' },
+  { name: 'Rodanthe', slug: 'rodanthe-village', description: 'Northern gateway, famous from Nights in Rodanthe' },
+  { name: 'Waves', slug: 'waves-village', description: 'Surf-friendly, laid-back atmosphere' },
+  { name: 'Salvo', slug: 'salvo-village', description: 'Quiet and family-friendly' },
+  { name: 'Avon', slug: 'avon-village', description: 'Central location with shops & dining' },
+  { name: 'Buxton', slug: 'buxton-village', description: 'Near Cape Hatteras Lighthouse' },
+  { name: 'Frisco', slug: 'frisco-village', description: 'Secluded beaches, great fishing' },
   { name: 'Hatteras Village', slug: 'hatteras-village', description: 'Southern tip, ferry to Ocracoke' },
 ];
 

@@ -267,10 +267,12 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                 )}
 
                 {/* Amenities */}
-                <div className="mb-8">
-                  <h2 className="text-xl font-semibold mb-4">Amenities</h2>
-                  <AmenityList amenities={property.amenities} />
-                </div>
+                {property.amenities && property.amenities.length > 0 && (
+                  <div className="mb-8">
+                    <h2 className="text-xl font-semibold mb-4">Amenities</h2>
+                    <AmenityList amenities={property.amenities} />
+                  </div>
+                )}
 
                 {/* House Rules */}
                 {property.houseRules && (

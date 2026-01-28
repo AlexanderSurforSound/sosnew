@@ -24,11 +24,11 @@ export function PropertySchema({ property, url }: PropertySchemaProps) {
       addressRegion: 'NC',
       addressCountry: 'US',
     },
-    geo: property.location
+    geo: property.latitude && property.longitude
       ? {
           '@type': 'GeoCoordinates',
-          latitude: property.location.lat,
-          longitude: property.location.lng,
+          latitude: property.latitude,
+          longitude: property.longitude,
         }
       : undefined,
     numberOfRooms: property.bedrooms,

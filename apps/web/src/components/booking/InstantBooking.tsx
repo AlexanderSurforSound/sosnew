@@ -1,13 +1,12 @@
 /**
  * Instant Booking Widget - Client Component
  *
- * Real-time pricing with SWR for instant updates
+ * Booking widget for vacation rentals
  */
 
 'use client';
 
 import { useState, useMemo } from 'react';
-import { usePricing } from '@/hooks/useBeacon';
 import { format, addDays, differenceInDays } from 'date-fns';
 
 interface InstantBookingProps {
@@ -40,12 +39,19 @@ export function InstantBooking({
     return differenceInDays(new Date(checkOut), new Date(checkIn));
   }, [checkIn, checkOut]);
 
-  // Fetch real-time pricing using SWR
-  const { pricing, isLoading, error } = usePricing(
-    checkIn && checkOut && nights >= minNights
-      ? { propertyId, checkIn, checkOut, guests, promoCode: promoCode || undefined }
-      : null
-  );
+  // Simple estimated pricing (actual pricing comes from Track PMS during booking)
+  const estimatedTotal = useMemo(() => {
+    if (!baseRate || nights <= 0) return null;
+    const subtotal = baseRate * nights;
+    const cleaningFee = 150; // Typical cleaning fee
+    const taxes = subtotal * 0.12; // Approximate tax rate
+    return {
+      subtotal,
+      cleaningFee,
+      taxes: Math.round(taxes),
+      total: Math.round(subtotal + cleaningFee + taxes),
+    };
+  }, [baseRate, nights]);
 
   const handleCheckInChange = (date: string) => {
     setCheckIn(date);
@@ -61,35 +67,16 @@ export function InstantBooking({
     <div className="bg-white rounded-xl shadow-lg border p-6 sticky top-24">
       {/* Price Header */}
       <div className="mb-6">
-        {isLoading ? (
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-32 mb-1" />
-            <div className="h-4 bg-gray-200 rounded w-20" />
-          </div>
-        ) : pricing ? (
-          <>
-            <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-gray-900">
-                ${Math.round(pricing.totalAmount / nights).toLocaleString()}
-              </span>
-              <span className="text-gray-500">/ night</span>
-            </div>
-            {pricing.discount && (
-              <p className="text-green-600 text-sm font-medium">
-                You save ${pricing.discount.savings.toLocaleString()}!
-              </p>
-            )}
-          </>
+        <div className="flex items-baseline gap-1">
+          <span className="text-3xl font-bold text-gray-900">
+            ${baseRate?.toLocaleString() || '---'}
+          </span>
+          <span className="text-gray-500">/ night</span>
+        </div>
+        {nights > 0 && nights >= minNights && estimatedTotal ? (
+          <p className="text-gray-500 text-sm">Est. total: ${estimatedTotal.total.toLocaleString()}</p>
         ) : (
-          <>
-            <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-gray-900">
-                ${baseRate?.toLocaleString() || '---'}
-              </span>
-              <span className="text-gray-500">/ night</span>
-            </div>
-            <p className="text-gray-500 text-sm">Select dates for total</p>
-          </>
+          <p className="text-gray-500 text-sm">Select dates for total</p>
         )}
       </div>
 
@@ -163,46 +150,34 @@ export function InstantBooking({
       )}
 
       {/* Price Breakdown */}
-      {pricing && nights > 0 && (
+      {estimatedTotal && nights > 0 && nights >= minNights && (
         <div className="border-t pt-4 mb-4 space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-gray-600">
-              ${Math.round(pricing.baseRate)} x {nights} nights
+              ${baseRate} x {nights} nights
             </span>
-            <span>${pricing.subtotal.toLocaleString()}</span>
+            <span>${estimatedTotal.subtotal.toLocaleString()}</span>
           </div>
-
-          {pricing.fees.map((fee: any) => (
-            <div key={fee.name} className="flex justify-between">
-              <span className="text-gray-600">{fee.name}</span>
-              <span>${fee.calculated.toLocaleString()}</span>
-            </div>
-          ))}
 
           <div className="flex justify-between">
-            <span className="text-gray-600">Taxes</span>
-            <span>${pricing.taxes.toLocaleString()}</span>
+            <span className="text-gray-600">Cleaning fee</span>
+            <span>${estimatedTotal.cleaningFee.toLocaleString()}</span>
           </div>
 
-          {pricing.discount && (
-            <div className="flex justify-between text-green-600">
-              <span>Discount ({pricing.discount.code})</span>
-              <span>-${pricing.discount.savings.toLocaleString()}</span>
-            </div>
-          )}
+          <div className="flex justify-between">
+            <span className="text-gray-600">Taxes (est.)</span>
+            <span>${estimatedTotal.taxes.toLocaleString()}</span>
+          </div>
 
           <div className="flex justify-between font-semibold text-base pt-2 border-t">
-            <span>Total</span>
-            <span>${pricing.totalAmount.toLocaleString()}</span>
+            <span>Est. Total</span>
+            <span>${estimatedTotal.total.toLocaleString()}</span>
           </div>
-        </div>
-      )}
 
-      {/* Error Message */}
-      {error && (
-        <p className="text-red-500 text-sm mb-4">
-          Unable to calculate pricing. Please try again.
-        </p>
+          <p className="text-xs text-gray-500 italic">
+            Final pricing confirmed at checkout
+          </p>
+        </div>
       )}
 
       {/* Minimum Nights Warning */}
@@ -214,10 +189,10 @@ export function InstantBooking({
 
       {/* Book Button */}
       <button
-        disabled={!pricing || nights < minNights}
+        disabled={nights < minNights}
         className="w-full bg-secondary hover:bg-secondary/90 disabled:bg-gray-300 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
       >
-        {isLoading ? 'Calculating...' : 'Reserve Now'}
+        Reserve Now
       </button>
 
       <p className="text-center text-xs text-gray-500 mt-3">

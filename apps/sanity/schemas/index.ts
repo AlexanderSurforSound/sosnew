@@ -17,6 +17,18 @@ import siteSettings from './siteSettings'
 import charge from './charge'
 import newsletter from './newsletter'
 
+// Page-specific content
+import homePage from './homePage'
+import propertyManagementPage from './propertyManagementPage'
+import aboutPage from './aboutPage'
+import contactPage from './contactPage'
+import legalPage from './legalPage'
+
+// UI Settings
+import propertyPageSettings from './propertyPageSettings'
+import searchPageSettings from './searchPageSettings'
+import uiStrings from './uiStrings'
+
 export const schemaTypes = [
   // Core content
   property,
@@ -43,4 +55,16 @@ export const schemaTypes = [
   staffMember,
   partner,
   charge,
+
+  // Page content (singleton documents)
+  homePage,
+  propertyManagementPage,
+  aboutPage,
+  contactPage,
+  legalPage,
+
+  // UI Settings (singleton documents)
+  propertyPageSettings,
+  searchPageSettings,
+  uiStrings,
 ]

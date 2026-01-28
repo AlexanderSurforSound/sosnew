@@ -6,7 +6,6 @@ import {
   ShoppingCart,
   Gift,
   Utensils,
-  ShoppingBag,
   Sparkles,
   ChevronRight,
   Star,
@@ -14,19 +13,10 @@ import {
 import GiftCards from '@/components/giftcards/GiftCards';
 import GroceryPrestock from '@/components/services/GroceryPrestock';
 import RestaurantReservations from '@/components/dining/RestaurantReservations';
-import Marketplace from '@/components/marketplace/Marketplace';
 
-type ServiceTab = 'marketplace' | 'groceries' | 'dining' | 'giftcards';
+type ServiceTab = 'groceries' | 'dining' | 'giftcards';
 
 const services = [
-  {
-    id: 'marketplace' as ServiceTab,
-    name: 'Marketplace',
-    description: 'Beach gear, equipment rentals, and more',
-    icon: ShoppingBag,
-    color: 'from-purple-500 to-indigo-600',
-    popular: true,
-  },
   {
     id: 'groceries' as ServiceTab,
     name: 'Grocery Pre-Stocking',
@@ -54,7 +44,7 @@ const services = [
 ];
 
 export default function ServicesPage() {
-  const [activeService, setActiveService] = useState<ServiceTab>('marketplace');
+  const [activeService, setActiveService] = useState<ServiceTab>('groceries');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -82,7 +72,7 @@ export default function ServicesPage() {
 
       {/* Service Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid sm:grid-cols-3 gap-4">
           {services.map((service, index) => (
             <motion.button
               key={service.id}
@@ -123,7 +113,6 @@ export default function ServicesPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          {activeService === 'marketplace' && <Marketplace />}
           {activeService === 'groceries' && <GroceryPrestock />}
           {activeService === 'dining' && <RestaurantReservations />}
           {activeService === 'giftcards' && <GiftCards />}

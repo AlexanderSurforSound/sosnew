@@ -10,21 +10,21 @@ import {
   Waves,
   Camera,
   Fish,
-  Sun,
-  Wind,
-  Heart,
+  BookOpen,
   ArrowRight,
   MapPin,
+  Clock,
+  TrendingUp,
 } from 'lucide-react';
 
 const villages = [
-  { name: 'Rodanthe', slug: 'rodanthe', description: 'Northern gateway with amazing kiteboarding' },
-  { name: 'Waves', slug: 'waves', description: 'Quiet beaches and peaceful setting' },
-  { name: 'Salvo', slug: 'salvo', description: 'Family-friendly with sound access' },
-  { name: 'Avon', slug: 'avon', description: 'Central hub with restaurants and Avon Pier' },
-  { name: 'Buxton', slug: 'buxton', description: 'Home of Cape Hatteras Lighthouse' },
-  { name: 'Frisco', slug: 'frisco', description: 'Quiet community with Native American Museum' },
-  { name: 'Hatteras Village', slug: 'hatteras-village', description: 'Historic fishing village' },
+  { name: 'Rodanthe', slug: 'rodanthe-village', description: 'Northern gateway with amazing kiteboarding' },
+  { name: 'Waves', slug: 'waves-village', description: 'Quiet beaches and peaceful setting' },
+  { name: 'Salvo', slug: 'salvo-village', description: 'Family-friendly with sound access' },
+  { name: 'Avon', slug: 'avon-village', description: 'Central hub with restaurants and Avon Pier' },
+  { name: 'Buxton', slug: 'buxton-village', description: 'Home of Cape Hatteras Lighthouse' },
+  { name: 'Frisco', slug: 'frisco-village', description: 'Quiet community with Native American Museum' },
+  { name: 'Hatteras', slug: 'hatteras-village', description: 'Historic fishing village' },
 ];
 
 const categories = [
@@ -34,6 +34,7 @@ const categories = [
   { id: 'events', label: 'Events', icon: Calendar },
   { id: 'attractions', label: 'Attractions', icon: Camera },
   { id: 'fishing', label: 'Fishing', icon: Fish },
+  { id: 'blog', label: 'Blog', icon: BookOpen },
 ];
 
 const highlights = [
@@ -61,15 +62,76 @@ const highlights = [
   {
     title: 'Hatteras Ferry',
     category: 'attractions',
-    village: 'Hatteras Village',
+    village: 'Hatteras',
     description: 'Free ferry to Ocracoke Island. A scenic 40-minute ride.',
     image: '/images/ferry.jpg',
+  },
+];
+
+// Blog posts - will be pulled from Sanity CMS
+const blogPosts = [
+  {
+    title: 'Best Time to Visit Hatteras Island',
+    slug: 'best-time-to-visit',
+    category: 'blog',
+    excerpt: 'Planning your Outer Banks vacation? Here\'s everything you need to know about seasonal weather, crowds, and activities throughout the year.',
+    readTime: '5 min read',
+    date: 'Jan 15, 2026',
+    featured: true,
+  },
+  {
+    title: 'Top 10 Restaurants on Hatteras Island',
+    slug: 'top-restaurants',
+    category: 'dining',
+    excerpt: 'From fresh seafood to casual beach bites, discover the best local dining spots recommended by island locals.',
+    readTime: '8 min read',
+    date: 'Jan 10, 2026',
+    featured: true,
+  },
+  {
+    title: 'Beginner\'s Guide to Kiteboarding',
+    slug: 'kiteboarding-guide',
+    category: 'activities',
+    excerpt: 'Hatteras Island is one of the best places in the world to learn kiteboarding. Here\'s how to get started.',
+    readTime: '6 min read',
+    date: 'Jan 5, 2026',
+    featured: false,
+  },
+  {
+    title: 'Fishing Calendar: What\'s Biting When',
+    slug: 'fishing-calendar',
+    category: 'fishing',
+    excerpt: 'A month-by-month guide to the best fishing opportunities on Hatteras Island, from surf fishing to offshore charters.',
+    readTime: '7 min read',
+    date: 'Dec 28, 2025',
+    featured: false,
+  },
+  {
+    title: 'History of the Cape Hatteras Lighthouse',
+    slug: 'lighthouse-history',
+    category: 'attractions',
+    excerpt: 'Learn about the fascinating history of America\'s tallest brick lighthouse and its dramatic 1999 relocation.',
+    readTime: '10 min read',
+    date: 'Dec 20, 2025',
+    featured: false,
+  },
+  {
+    title: 'Hidden Gems: Secret Spots Only Locals Know',
+    slug: 'hidden-gems',
+    category: 'blog',
+    excerpt: 'Discover the lesser-known beaches, trails, and experiences that make Hatteras Island truly special.',
+    readTime: '6 min read',
+    date: 'Dec 15, 2025',
+    featured: true,
   },
 ];
 
 export default function IslandGuidePage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeVillage, setActiveVillage] = useState<string | null>(null);
+
+  const filteredHighlights = highlights.filter(h => activeCategory === 'all' || h.category === activeCategory);
+  const filteredPosts = blogPosts.filter(p => activeCategory === 'all' || p.category === activeCategory || activeCategory === 'blog');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -86,10 +148,10 @@ export default function IslandGuidePage() {
               <span className="font-medium">Discover Hatteras Island</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Island Guide
+              Island Guide & Blog
             </h1>
             <p className="text-xl text-cyan-100 mb-8">
-              Everything you need to know about dining, activities, events, and attractions on Hatteras Island.
+              Your complete resource for Hatteras Island - dining, activities, events, local tips, and travel inspiration.
             </p>
           </motion.div>
         </div>
@@ -125,7 +187,7 @@ export default function IslandGuidePage() {
               className="mt-6 pt-6 border-t"
             >
               <Link
-                href={`/villages/${activeVillage}`}
+                href={`/properties?village=${activeVillage}`}
                 className="inline-flex items-center gap-2 text-cyan-600 hover:text-cyan-700 font-medium"
               >
                 View {villages.find(v => v.slug === activeVillage)?.name} Properties
@@ -156,31 +218,137 @@ export default function IslandGuidePage() {
           })}
         </div>
 
-        {/* Highlights Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {highlights
-            .filter(h => activeCategory === 'all' || h.category === activeCategory)
-            .map((highlight, index) => (
-              <motion.div
-                key={highlight.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow"
-              >
-                <div className="h-40 bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
-                  <Camera className="w-12 h-12 text-white/30" />
-                </div>
-                <div className="p-5">
-                  <div className="flex items-center gap-1.5 text-gray-500 text-sm mb-2">
-                    <MapPin className="w-3.5 h-3.5" />
-                    <span>{highlight.village}</span>
+        {/* Featured Blog Posts */}
+        {(activeCategory === 'all' || activeCategory === 'blog') && (
+          <div className="mb-12">
+            <div className="flex items-center gap-2 mb-6">
+              <TrendingUp className="w-5 h-5 text-cyan-600" />
+              <h2 className="text-xl font-bold text-gray-900">Featured Articles</h2>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              {blogPosts.filter(p => p.featured).map((post, index) => (
+                <motion.article
+                  key={post.slug}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow group"
+                >
+                  <div className="h-40 bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+                    <BookOpen className="w-12 h-12 text-white/30 group-hover:scale-110 transition-transform" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{highlight.title}</h3>
-                  <p className="text-sm text-gray-600">{highlight.description}</p>
-                </div>
-              </motion.div>
-            ))}
+                  <div className="p-5">
+                    <div className="flex items-center gap-3 text-sm text-gray-500 mb-2">
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5" />
+                        {post.readTime}
+                      </span>
+                      <span>{post.date}</span>
+                    </div>
+                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-cyan-600 transition-colors">
+                      {post.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 line-clamp-2">{post.excerpt}</p>
+                    <Link
+                      href={`/island-guide/${post.slug}`}
+                      className="inline-flex items-center gap-1 text-cyan-600 text-sm font-medium mt-3 hover:gap-2 transition-all"
+                    >
+                      Read more
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Highlights Grid */}
+        {activeCategory !== 'blog' && filteredHighlights.length > 0 && (
+          <div className="mb-12">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Things to Do & See</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {filteredHighlights.map((highlight, index) => (
+                <motion.div
+                  key={highlight.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow"
+                >
+                  <div className="h-40 bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+                    <Camera className="w-12 h-12 text-white/30" />
+                  </div>
+                  <div className="p-5">
+                    <div className="flex items-center gap-1.5 text-gray-500 text-sm mb-2">
+                      <MapPin className="w-3.5 h-3.5" />
+                      <span>{highlight.village}</span>
+                    </div>
+                    <h3 className="font-semibold text-gray-900 mb-2">{highlight.title}</h3>
+                    <p className="text-sm text-gray-600">{highlight.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* All Blog Posts */}
+        {filteredPosts.length > 0 && (
+          <div className="mb-12">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">
+              {activeCategory === 'blog' ? 'All Articles' : 'Related Articles'}
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {filteredPosts.filter(p => activeCategory === 'blog' || !p.featured).map((post, index) => (
+                <motion.article
+                  key={post.slug}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="bg-white rounded-xl shadow-sm p-6 hover:shadow-lg transition-shadow group flex gap-5"
+                >
+                  <div className="w-24 h-24 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg flex-shrink-0 flex items-center justify-center">
+                    <BookOpen className="w-8 h-8 text-white/30" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 text-sm text-gray-500 mb-1">
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5" />
+                        {post.readTime}
+                      </span>
+                      <span>{post.date}</span>
+                    </div>
+                    <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-cyan-600 transition-colors">
+                      {post.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 line-clamp-2">{post.excerpt}</p>
+                  </div>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Newsletter CTA */}
+        <div className="bg-gradient-to-r from-cyan-600 to-blue-700 rounded-2xl p-8 text-white text-center">
+          <h2 className="text-2xl font-bold mb-3">Stay in the Loop</h2>
+          <p className="text-cyan-100 mb-6 max-w-2xl mx-auto">
+            Get the latest Hatteras Island news, travel tips, and exclusive offers delivered to your inbox.
+          </p>
+          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500"
+            />
+            <button
+              type="submit"
+              className="px-6 py-3 bg-white text-cyan-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            >
+              Subscribe
+            </button>
+          </form>
         </div>
 
         {/* CTA */}

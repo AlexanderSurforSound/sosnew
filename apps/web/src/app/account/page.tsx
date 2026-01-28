@@ -215,7 +215,7 @@ export default function AccountDashboardPage() {
                   href: '/properties',
                   icon: MapPin,
                   title: 'Find a Property',
-                  description: 'Browse 600+ vacation rentals',
+                  description: 'Browse vacation rentals',
                   color: 'bg-ocean-50 text-ocean-600',
                 },
                 {

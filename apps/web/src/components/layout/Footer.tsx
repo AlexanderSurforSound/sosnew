@@ -34,8 +34,8 @@ interface FooterProps {
 export function Footer({ className = '' }: FooterProps) {
   return (
     <footer id="footer" className={`bg-gray-900 text-white ${className}`}>
-      <div className="container-page py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+      <div className="container-page py-10 sm:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
           {/* Company Info */}
           <div>
             <Link href="/" className="inline-block mb-6">
@@ -50,26 +50,26 @@ export function Footer({ className = '' }: FooterProps) {
             <p className="text-gray-400 text-lg mb-6">
               Premier vacation rentals on Hatteras Island, NC. Experience the best of the Outer Banks.
             </p>
-            <div className="flex flex-wrap gap-3">
-              <a href="https://facebook.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-blue-600 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all" title="Facebook">
+            <div className="flex flex-wrap gap-2 sm:gap-3">
+              <a href="https://facebook.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-blue-600 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all touch-manipulation" title="Facebook">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="https://instagram.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-500 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all" title="Instagram">
+              <a href="https://instagram.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-500 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all touch-manipulation" title="Instagram">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="https://youtube.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-red-600 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all" title="YouTube">
+              <a href="https://youtube.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-red-600 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all touch-manipulation" title="YouTube">
                 <Youtube className="w-5 h-5" />
               </a>
-              <a href="https://tiktok.com/@surforsound" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-black rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all" title="TikTok">
+              <a href="https://tiktok.com/@surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-black rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all touch-manipulation" title="TikTok">
                 <TikTokIcon className="w-5 h-5" />
               </a>
-              <a href="https://x.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-black rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all" title="X (Twitter)">
+              <a href="https://x.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-black rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all touch-manipulation" title="X (Twitter)">
                 <XTwitterIcon className="w-5 h-5" />
               </a>
-              <a href="https://pinterest.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-red-700 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all" title="Pinterest">
+              <a href="https://pinterest.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-red-700 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all touch-manipulation" title="Pinterest">
                 <PinterestIcon className="w-5 h-5" />
               </a>
-              <a href="https://truthsocial.com/@surforsound" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-blue-700 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all" title="Truth Social">
+              <a href="https://truthsocial.com/@surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-blue-700 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all touch-manipulation" title="Truth Social">
                 <TruthSocialIcon className="w-5 h-5" />
               </a>
             </div>
@@ -112,9 +112,9 @@ export function Footer({ className = '' }: FooterProps) {
             </ul>
           </div>
 
-          {/* Explore & Shop */}
+          {/* Explore Hatteras */}
           <div>
-            <h4 className="font-semibold text-xl mb-5">Explore & Shop</h4>
+            <h4 className="font-semibold text-xl mb-5">Explore Hatteras</h4>
             <ul className="space-y-3">
               <li>
                 <Link href="/island-guide" className="text-gray-400 hover:text-white text-lg transition-colors">
@@ -132,13 +132,8 @@ export function Footer({ className = '' }: FooterProps) {
                 </Link>
               </li>
               <li>
-                <Link href="/marketplace" className="text-gray-400 hover:text-white text-lg transition-colors">
-                  Marketplace
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop" className="text-gray-400 hover:text-white text-lg transition-colors">
-                  Merchandise
+                <Link href="/island-guide?tab=blog" className="text-gray-400 hover:text-white text-lg transition-colors">
+                  Blog & Stories
                 </Link>
               </li>
             </ul>
@@ -188,21 +183,21 @@ export function Footer({ className = '' }: FooterProps) {
         </div>
 
         {/* Newsletter signup */}
-        <div className="border-t border-gray-800 mt-12 pt-10">
+        <div className="border-t border-gray-800 mt-10 sm:mt-12 pt-8 sm:pt-10">
           <div className="max-w-xl">
-            <h4 className="font-semibold text-xl mb-3">Stay Updated</h4>
-            <p className="text-gray-400 text-base mb-5">
+            <h4 className="font-semibold text-lg sm:text-xl mb-2 sm:mb-3">Stay Updated</h4>
+            <p className="text-gray-400 text-sm sm:text-base mb-4 sm:mb-5">
               Get exclusive deals, travel tips, and island updates delivered to your inbox.
             </p>
-            <form className="flex gap-3">
+            <form className="flex flex-col xs:flex-row gap-3">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-5 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white text-lg placeholder-gray-500 focus:outline-none focus:border-ocean-500"
+                className="flex-1 px-4 sm:px-5 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white text-base sm:text-lg placeholder-gray-500 focus:outline-none focus:border-ocean-500 min-h-[48px]"
               />
               <button
                 type="submit"
-                className="px-8 py-3 bg-ocean-600 text-white rounded-lg text-lg font-medium hover:bg-ocean-700 transition-colors"
+                className="px-6 sm:px-8 py-3 bg-ocean-600 text-white rounded-lg text-base sm:text-lg font-medium hover:bg-ocean-700 transition-colors min-h-[48px] touch-manipulation"
               >
                 Subscribe
               </button>

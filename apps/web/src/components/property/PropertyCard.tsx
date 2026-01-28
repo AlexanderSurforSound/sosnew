@@ -237,14 +237,14 @@ export function PropertyCard({ property, showPrice = true, onQuickView, variant 
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-        {/* Action Buttons */}
-        <div className="absolute top-3 right-3 flex gap-2">
+        {/* Action Buttons - Larger touch targets on mobile */}
+        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex gap-1.5 sm:gap-2">
           <motion.button
             initial={false}
             animate={{ scale: inCompare ? 1.1 : 1 }}
             onClick={handleCompareClick}
             disabled={!inCompare && !canAddMore}
-            className={`p-2.5 rounded-full backdrop-blur-md transition-all duration-200 ${
+            className={`p-2 sm:p-2.5 rounded-full backdrop-blur-md transition-all duration-200 touch-manipulation min-w-[40px] min-h-[40px] sm:min-w-0 sm:min-h-0 flex items-center justify-center ${
               inCompare
                 ? 'bg-blue-600 text-white shadow-lg'
                 : 'bg-white/90 hover:bg-white text-gray-700 disabled:opacity-50 shadow-md'
@@ -258,7 +258,7 @@ export function PropertyCard({ property, showPrice = true, onQuickView, variant 
             whileTap={{ scale: 0.9 }}
             onClick={handleFavoriteClick}
             disabled={isTogglingFavorite}
-            className={`p-2.5 rounded-full backdrop-blur-md bg-white/90 hover:bg-white transition-all duration-200 shadow-md ${
+            className={`p-2 sm:p-2.5 rounded-full backdrop-blur-md bg-white/90 hover:bg-white transition-all duration-200 shadow-md touch-manipulation min-w-[40px] min-h-[40px] sm:min-w-0 sm:min-h-0 flex items-center justify-center ${
               propertyIsFavorite ? 'text-red-500' : 'text-gray-700'
             }`}
             aria-label={propertyIsFavorite ? 'Remove from favorites' : 'Add to favorites'}

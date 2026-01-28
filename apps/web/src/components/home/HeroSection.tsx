@@ -8,11 +8,16 @@ import { useWeather } from '@/hooks/useWeather';
 
 const MIN_NIGHTS = 3;
 
-// Cinematic text that rotates
+// Cinematic text that rotates - synced to 40-second video (8 × 5 sec)
 const heroTexts = [
-  { main: "Where the Atlantic", accent: "Meets Your Soul" },
+  { main: "Hatteras Island", accent: "Is Calling" },
+  { main: "Ocean on One Side", accent: "Sound on the Other" },
   { main: "Fifty Miles of", accent: "Untouched Shoreline" },
-  { main: "Your Island", accent: "Awaits" },
+  { main: "Legends", accent: "Are Made Here" },
+  { main: "Morning Tides", accent: "Evening Fires" },
+  { main: "Find Your Place", accent: "Find Your Peace" },
+  { main: "Cast Your Line", accent: "Clear Your Mind" },
+  { main: "Your Story", accent: "Begins Here" },
 ];
 
 export default function HeroSection() {
@@ -26,6 +31,8 @@ export default function HeroSection() {
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoError, setVideoError] = useState(false);
   const weatherRef = useRef<HTMLDivElement>(null);
 
   // Live weather data
@@ -136,21 +143,30 @@ export default function HeroSection() {
           transform: `translate3d(0, ${scrollProgress * 150}px, 0) scale(${1 + scrollProgress * 0.1})`,
         }}
       >
-        {/* Video Background - replace src with actual drone footage */}
+        {/* Fallback gradient - shows behind video or if video fails */}
+        <div className={`absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-900 transition-opacity duration-1000 ${videoLoaded && !videoError ? 'opacity-0' : 'opacity-100'}`} />
+
+        {/* Video Background */}
         <video
           ref={videoRef}
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
+          style={{ filter: 'contrast(1.05) saturate(1.1) brightness(1.02)' }}
           poster="/images/hero-poster.jpg"
+          onCanPlay={() => setVideoLoaded(true)}
+          onError={(e) => {
+            // Only set error if video truly failed to load, not on loop
+            const video = e.currentTarget;
+            if (video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+              setVideoError(true);
+            }
+          }}
         >
-          <source src="/videos/hatteras-aerial.mp4" type="video/mp4" />
+          <source src="/videos/hatteras-aerial.mp4?v=2" type="video/mp4" />
         </video>
-
-        {/* Fallback gradient if no video */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-900" />
 
         {/* Cinematic overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70" />
@@ -164,11 +180,11 @@ export default function HeroSection() {
         />
       </div>
 
-      {/* Video Controls */}
-      <div className="absolute bottom-8 left-8 z-30 flex gap-2">
+      {/* Video Controls - Hidden on small mobile for cleaner look */}
+      <div className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 z-30 hidden xs:flex gap-2">
         <button
           onClick={toggleVideo}
-          className="p-3 bg-white/10 backdrop-blur-md rounded-full hover:bg-white/20 transition-colors border border-white/20"
+          className="p-2.5 sm:p-3 bg-white/10 backdrop-blur-md rounded-full hover:bg-white/20 transition-colors border border-white/20 touch-manipulation"
           aria-label={isVideoPlaying ? 'Pause video' : 'Play video'}
         >
           {isVideoPlaying ? (
@@ -179,7 +195,7 @@ export default function HeroSection() {
         </button>
         <button
           onClick={toggleMute}
-          className="p-3 bg-white/10 backdrop-blur-md rounded-full hover:bg-white/20 transition-colors border border-white/20"
+          className="p-2.5 sm:p-3 bg-white/10 backdrop-blur-md rounded-full hover:bg-white/20 transition-colors border border-white/20 touch-manipulation"
           aria-label={isMuted ? 'Unmute' : 'Mute'}
         >
           {isMuted ? (
@@ -233,7 +249,7 @@ export default function HeroSection() {
             transition={{ delay: 1.2, duration: 1 }}
             className="mt-8 text-lg sm:text-xl text-white/70 max-w-2xl mx-auto font-light leading-relaxed"
           >
-            Six hundred homes. Seven villages. One unforgettable escape.
+            Seven villages. One unforgettable escape.
             <span className="block mt-2 text-white/50 text-base">
               The premier vacation rental collection on North Carolina's most iconic barrier island.
             </span>
@@ -309,7 +325,7 @@ export default function HeroSection() {
 
           {/* Subtle helper text */}
           <p className="text-center text-white/40 text-sm mt-4">
-            {MIN_NIGHTS}-night minimum stay • No booking fees • Best price guaranteed
+            {MIN_NIGHTS}-night minimum stay
           </p>
         </motion.form>
 
@@ -331,12 +347,12 @@ export default function HeroSection() {
         </motion.div>
       </div>
 
-      {/* Live Conditions Badge - Clickable for Forecast */}
+      {/* Live Conditions Badge - Clickable for Forecast - Hidden on mobile */}
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 1.5 }}
-        className="absolute bottom-8 right-8 z-30"
+        className="absolute bottom-4 sm:bottom-8 right-4 sm:right-8 z-30 hidden md:block"
       >
         <div ref={weatherRef} className="relative">
           {/* Main Weather Widget */}

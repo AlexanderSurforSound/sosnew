@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { Menu, X, User, Heart, Phone, Calendar, GitCompare, Mic, Search, ShoppingBag, Store, Compass } from 'lucide-react';
+import { Menu, X, User, Heart, Phone, Calendar, GitCompare, Mic, Search, Compass, Home, Building2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { useCompare } from '@/contexts/CompareContext';
@@ -44,7 +44,7 @@ export function Header() {
           </div>
           <div className="hidden sm:flex items-center gap-6">
             <Link href="/about" className="hover:text-white transition-colors">About</Link>
-            <Link href="/owners" className="hover:text-white transition-colors">Owners</Link>
+            <Link href="/owner-portal" className="hover:text-white transition-colors">Owner Login</Link>
             <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
           </div>
         </div>
@@ -82,27 +82,27 @@ export function Header() {
               Island Guide
             </Link>
 
-            {/* Marketplace Link */}
-            <Link
-              href="/marketplace"
-              className="px-5 py-2.5 text-white/90 hover:text-white hover:bg-white/10 rounded-lg text-lg font-medium transition-colors"
-            >
-              Marketplace
-            </Link>
-
-            {/* Shop Link */}
-            <Link
-              href="/shop"
-              className="px-5 py-2.5 text-white/90 hover:text-white hover:bg-white/10 rounded-lg text-lg font-medium transition-colors"
-            >
-              Shop
-            </Link>
-
             <Link
               href="/specials"
               className="px-5 py-2.5 text-white/90 hover:text-white hover:bg-white/10 rounded-lg text-lg font-medium transition-colors"
             >
               Specials
+            </Link>
+
+            <a
+              href="https://surforsoundsales.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 text-white/90 hover:text-white hover:bg-white/10 rounded-lg text-lg font-medium transition-colors"
+            >
+              Sales
+            </a>
+
+            <Link
+              href="/owners"
+              className="px-5 py-2.5 text-white/90 hover:text-white hover:bg-white/10 rounded-lg text-lg font-medium transition-colors"
+            >
+              Property Management
             </Link>
           </div>
 
@@ -144,10 +144,10 @@ export function Header() {
               </div>
             )}
 
-            {/* Favorites */}
+            {/* Favorites - Adequate touch target */}
             <Link
               href="/favorites"
-              className="relative p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+              className="relative p-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
             >
               <Heart className="w-5 h-5" />
               {favorites.length > 0 && (
@@ -186,10 +186,12 @@ export function Header() {
               </>
             )}
 
-            {/* Mobile menu button */}
+            {/* Mobile menu button - Larger touch target */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+              className="lg:hidden p-2.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMenuOpen}
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -217,27 +219,29 @@ export function Header() {
                 Island Guide
               </Link>
               <Link
-                href="/marketplace"
-                className="flex items-center gap-3 px-4 py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-lg font-medium transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Store className="w-5 h-5 text-emerald-400" />
-                Marketplace
-              </Link>
-              <Link
-                href="/shop"
-                className="flex items-center gap-3 px-4 py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-lg font-medium transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <ShoppingBag className="w-5 h-5 text-amber-400" />
-                Shop
-              </Link>
-              <Link
                 href="/specials"
                 className="flex items-center gap-3 px-4 py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-lg font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Specials
+              </Link>
+              <a
+                href="https://surforsoundsales.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 px-4 py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-lg font-medium transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Building2 className="w-5 h-5 text-emerald-400" />
+                Sales
+              </a>
+              <Link
+                href="/owners"
+                className="flex items-center gap-3 px-4 py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-lg font-medium transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Home className="w-5 h-5 text-violet-400" />
+                Property Management
               </Link>
 
               <hr className="border-white/10 my-2" />
