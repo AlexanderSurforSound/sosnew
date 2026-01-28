@@ -7,7 +7,7 @@ import { Footer } from '@/components/layout/Footer';
 import { ChatWidget } from '@/components/chat/ChatWidget';
 import { CompareBar } from '@/components/compare/CompareBar';
 import { ToastContainer } from '@/components/notifications';
-import { SkipLinks, KeyboardShortcuts, AccessibilityControls } from '@/components/accessibility';
+import { SkipLinks, KeyboardShortcuts } from '@/components/accessibility';
 import MobileNav from '@/components/layout/MobileNav';
 import { WebVitals } from '@/components/performance';
 import { Providers } from './providers';
@@ -16,12 +16,16 @@ const merriweather = Merriweather({
   subsets: ['latin'],
   weight: ['300', '400', '700', '900'],
   variable: '--font-merriweather',
+  fallback: ['Georgia', 'serif'],
+  display: 'swap',
 });
 
 const nunitoSans = Nunito_Sans({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
   variable: '--font-nunito-sans',
+  fallback: ['system-ui', 'arial'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -30,7 +34,7 @@ export const metadata: Metadata = {
     template: '%s | Surf or Sound Realty',
   },
   description:
-    'Discover 600+ vacation rentals on Hatteras Island, NC. Oceanfront homes, pet-friendly properties, and luxury beach houses. Book your Outer Banks getaway today.',
+    'Discover vacation rentals on Hatteras Island, NC. Oceanfront homes, pet-friendly properties, and luxury beach houses. Book your Outer Banks getaway today.',
   keywords: [
     'Hatteras Island vacation rentals',
     'Outer Banks rentals',
@@ -57,12 +61,12 @@ export const metadata: Metadata = {
     siteName: 'Surf or Sound Realty',
     title: 'Surf or Sound Realty | Hatteras Island Vacation Rentals',
     description:
-      'Discover 600+ vacation rentals on Hatteras Island, NC. Book your Outer Banks getaway today.',
+      'Discover vacation rentals on Hatteras Island, NC. Book your Outer Banks getaway today.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Surf or Sound Realty | Hatteras Island Vacation Rentals',
-    description: 'Discover 600+ vacation rentals on Hatteras Island, NC.',
+    description: 'Discover vacation rentals on Hatteras Island, NC.',
   },
   robots: {
     index: true,
@@ -108,7 +112,6 @@ export default function RootLayout({
           <CompareBar />
           <ChatWidget />
           <ToastContainer />
-          <AccessibilityControls />
           <KeyboardShortcuts />
         </Providers>
       </body>
