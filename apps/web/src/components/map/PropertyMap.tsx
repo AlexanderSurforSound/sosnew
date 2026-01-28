@@ -83,14 +83,9 @@ const getVillageBase = (slug: string): { lat: number; lng: number } => {
   return villageCoordinates['avon'];
 };
 
-// Generate coordinates for a property
+// Generate coordinates for a property based on village
 const getPropertyCoordinates = (property: Property, index: number): [number, number] => {
-  // Use actual coordinates if available from Track PMS
-  if (property.latitude && property.longitude) {
-    return [property.latitude, property.longitude];
-  }
-
-  // Fall back to village-based coordinates with offset
+  // Use village-based coordinates with offset
   const villageSlug = property.village?.slug || property.village?.name?.toLowerCase().replace(/\s+/g, '-') || 'avon';
   const base = getVillageBase(villageSlug);
 
