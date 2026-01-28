@@ -10,7 +10,10 @@
     "test": "jest"
   },
   "dependencies": {
+    "@graphql-tools/schema": "^10.0.31",
     "@microsoft/signalr": "^8.0.0",
+    "graphql": "^15.8.0",
+    "graphql-yoga": "^5.18.0",
     "@surf-or-sound/types": "*",
     "@surf-or-sound/ui": "*",
     "@surf-or-sound/utils": "*",

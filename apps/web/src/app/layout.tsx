@@ -16,16 +16,18 @@ const merriweather = Merriweather({
   subsets: ['latin'],
   weight: ['300', '400', '700', '900'],
   variable: '--font-merriweather',
-  fallback: ['Georgia', 'serif'],
   display: 'swap',
+  adjustFontFallback: false,
+  preload: true,
 });
 
 const nunitoSans = Nunito_Sans({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
   variable: '--font-nunito-sans',
-  fallback: ['system-ui', 'arial'],
   display: 'swap',
+  adjustFontFallback: false,
+  preload: true,
 });
 
 export const metadata: Metadata = {
