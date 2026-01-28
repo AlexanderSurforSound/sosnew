@@ -22,6 +22,9 @@ export interface Property {
   latitude?: number | null;
   longitude?: number | null;
   streetAddress?: string;
+  locality?: string;
+  region?: string;
+  postal?: string;
   // Computed/convenience fields
   primaryImage?: string;
   pricePerNight?: number;
@@ -143,6 +146,7 @@ export interface CreateReservationRequest {
   };
   agreement?: {
     signature: string;
+    sectionInitials?: Record<string, string>;
     agreedAddendums: string[];
     signedAt: string;
   };
