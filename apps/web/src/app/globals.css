@@ -345,7 +345,23 @@
   }
 }
 
-  /* Ensure links are distinguishable in prose */
-  .prose a { text-decoration: underline; }
-  .prose a:hover { text-decoration: none; }
-  .prose a:hover { text-decoration: none; }
+  /* Ensure prose content has readable text */
+  .prose {
+    color: rgb(17 24 39); /* gray-900 */
+  }
+  .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+    color: rgb(17 24 39); /* gray-900 */
+  }
+  .prose p, .prose li, .prose td, .prose th {
+    color: rgb(55 65 81); /* gray-700 */
+  }
+  .prose strong {
+    color: rgb(17 24 39); /* gray-900 */
+  }
+  .prose a {
+    text-decoration: underline;
+    color: rgb(14 165 233); /* cyan-500 */
+  }
+  .prose a:hover {
+    text-decoration: none;
+  }
