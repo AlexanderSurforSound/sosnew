@@ -47,29 +47,29 @@ export function Footer({ className = '' }: FooterProps) {
                 className="h-32 md:h-36 w-auto"
               />
             </Link>
-            <p className="text-gray-400 text-lg mb-6">
+            <p className="text-gray-300 text-lg mb-6">
               Premier vacation rentals on Hatteras Island, NC. Experience the best of the Outer Banks.
             </p>
             <div className="flex flex-wrap gap-2 sm:gap-3">
-              <a href="https://facebook.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-blue-600 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all touch-manipulation" title="Facebook">
+              <a href="https://facebook.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-blue-600 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition-all touch-manipulation" title="Facebook">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="https://instagram.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-500 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all touch-manipulation" title="Instagram">
+              <a href="https://instagram.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-500 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition-all touch-manipulation" title="Instagram">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="https://youtube.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-red-600 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all touch-manipulation" title="YouTube">
+              <a href="https://youtube.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-red-600 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition-all touch-manipulation" title="YouTube">
                 <Youtube className="w-5 h-5" />
               </a>
-              <a href="https://tiktok.com/@surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-black rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all touch-manipulation" title="TikTok">
+              <a href="https://tiktok.com/@surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-black rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition-all touch-manipulation" title="TikTok">
                 <TikTokIcon className="w-5 h-5" />
               </a>
-              <a href="https://x.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-black rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all touch-manipulation" title="X (Twitter)">
+              <a href="https://x.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-black rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition-all touch-manipulation" title="X (Twitter)">
                 <XTwitterIcon className="w-5 h-5" />
               </a>
-              <a href="https://pinterest.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-red-700 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all touch-manipulation" title="Pinterest">
+              <a href="https://pinterest.com/surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-red-700 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition-all touch-manipulation" title="Pinterest">
                 <PinterestIcon className="w-5 h-5" />
               </a>
-              <a href="https://truthsocial.com/@surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-blue-700 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition-all touch-manipulation" title="Truth Social">
+              <a href="https://truthsocial.com/@surforsound" target="_blank" rel="noopener noreferrer" className="w-11 h-11 sm:w-10 sm:h-10 bg-gray-800 hover:bg-blue-700 rounded-lg flex items-center justify-center text-gray-300 hover:text-white transition-all touch-manipulation" title="Truth Social">
                 <TruthSocialIcon className="w-5 h-5" />
               </a>
             </div>
@@ -80,32 +80,32 @@ export function Footer({ className = '' }: FooterProps) {
             <h4 className="font-semibold text-xl mb-5">Vacation Rentals</h4>
             <ul className="space-y-3">
               <li>
-                <Link href="/properties" className="text-gray-400 hover:text-white text-lg transition-colors">
+                <Link href="/properties" className="text-gray-300 hover:text-white text-lg transition-colors">
                   All Properties
                 </Link>
               </li>
               <li>
-                <Link href="/properties?petFriendly=true" className="text-gray-400 hover:text-white text-lg transition-colors">
+                <Link href="/properties?petFriendly=true" className="text-gray-300 hover:text-white text-lg transition-colors">
                   Pet Friendly
                 </Link>
               </li>
               <li>
-                <Link href="/properties?featured=true" className="text-gray-400 hover:text-white text-lg transition-colors">
+                <Link href="/properties?featured=true" className="text-gray-300 hover:text-white text-lg transition-colors">
                   Featured Homes
                 </Link>
               </li>
               <li>
-                <Link href="/specials" className="text-gray-400 hover:text-white text-lg transition-colors">
+                <Link href="/specials" className="text-gray-300 hover:text-white text-lg transition-colors">
                   Last Minute Deals
                 </Link>
               </li>
               <li>
-                <Link href="/compare" className="text-gray-400 hover:text-white text-lg transition-colors">
+                <Link href="/compare" className="text-gray-300 hover:text-white text-lg transition-colors">
                   Compare Properties
                 </Link>
               </li>
               <li>
-                <Link href="/favorites" className="text-gray-400 hover:text-white text-lg transition-colors">
+                <Link href="/favorites" className="text-gray-300 hover:text-white text-lg transition-colors">
                   My Favorites
                 </Link>
               </li>
@@ -117,22 +117,22 @@ export function Footer({ className = '' }: FooterProps) {
             <h4 className="font-semibold text-xl mb-5">Explore Hatteras</h4>
             <ul className="space-y-3">
               <li>
-                <Link href="/island-guide" className="text-gray-400 hover:text-white text-lg transition-colors">
+                <Link href="/island-guide" className="text-gray-300 hover:text-white text-lg transition-colors">
                   Island Guide
                 </Link>
               </li>
               <li>
-                <Link href="/island-guide?tab=dining" className="text-gray-400 hover:text-white text-lg transition-colors">
+                <Link href="/island-guide?tab=dining" className="text-gray-300 hover:text-white text-lg transition-colors">
                   Dining & Restaurants
                 </Link>
               </li>
               <li>
-                <Link href="/island-guide?tab=events" className="text-gray-400 hover:text-white text-lg transition-colors">
+                <Link href="/island-guide?tab=events" className="text-gray-300 hover:text-white text-lg transition-colors">
                   Events & Activities
                 </Link>
               </li>
               <li>
-                <Link href="/island-guide?tab=blog" className="text-gray-400 hover:text-white text-lg transition-colors">
+                <Link href="/island-guide?tab=blog" className="text-gray-300 hover:text-white text-lg transition-colors">
                   Blog & Stories
                 </Link>
               </li>
@@ -144,26 +144,26 @@ export function Footer({ className = '' }: FooterProps) {
             <h4 className="font-semibold text-xl mb-5">Contact Us</h4>
             <ul className="space-y-3">
               <li>
-                <a href="tel:800-237-1138" className="flex items-center gap-3 text-gray-400 hover:text-white text-xl font-medium transition-colors">
+                <a href="tel:800-237-1138" className="flex items-center gap-3 text-gray-300 hover:text-white text-xl font-medium transition-colors">
                   <Phone className="w-6 h-6" />
                   800.237.1138
                 </a>
               </li>
-              <li className="text-gray-400 text-base">Open Daily 8:30am - 5pm</li>
+              <li className="text-gray-300 text-base">Open Daily 8:30am - 5pm</li>
             </ul>
 
             {/* Office Locations */}
             <div className="mt-6 space-y-3">
               <h5 className="font-medium text-gray-300 text-lg">Our Offices</h5>
-              <div className="text-gray-400">
+              <div className="text-gray-300">
                 <p className="font-medium text-gray-300">Avon Office</p>
                 <p className="text-base">40974 NC Highway 12, Avon, NC 27915</p>
               </div>
-              <div className="text-gray-400">
+              <div className="text-gray-300">
                 <p className="font-medium text-gray-300">Salvo Office</p>
                 <p className="text-base">26204 Rampart St, Salvo, NC 27972</p>
               </div>
-              <div className="text-gray-400">
+              <div className="text-gray-300">
                 <p className="font-medium text-gray-300">Hatteras Office</p>
                 <p className="text-base">58079 NC Highway 12, Hatteras, NC 27943</p>
               </div>
@@ -173,10 +173,10 @@ export function Footer({ className = '' }: FooterProps) {
             <div className="mt-6">
               <h5 className="font-medium text-base mb-3 text-gray-300">Resources</h5>
               <div className="flex flex-wrap gap-x-5 gap-y-2 text-base">
-                <Link href="/about" className="text-gray-400 hover:text-white transition-colors">About</Link>
-                <Link href="/owners" className="text-gray-400 hover:text-white transition-colors">Owners</Link>
-                <Link href="/faq" className="text-gray-400 hover:text-white transition-colors">FAQs</Link>
-                <Link href="/contact" className="text-gray-400 hover:text-white transition-colors">Contact</Link>
+                <Link href="/about" className="text-gray-300 hover:text-white transition-colors">About</Link>
+                <Link href="/owners" className="text-gray-300 hover:text-white transition-colors">Owners</Link>
+                <Link href="/faq" className="text-gray-300 hover:text-white transition-colors">FAQs</Link>
+                <Link href="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</Link>
               </div>
             </div>
           </div>
@@ -186,7 +186,7 @@ export function Footer({ className = '' }: FooterProps) {
         <div className="border-t border-gray-800 mt-10 sm:mt-12 pt-8 sm:pt-10">
           <div className="max-w-xl">
             <h4 className="font-semibold text-lg sm:text-xl mb-2 sm:mb-3">Stay Updated</h4>
-            <p className="text-gray-400 text-sm sm:text-base mb-4 sm:mb-5">
+            <p className="text-gray-300 text-sm sm:text-base mb-4 sm:mb-5">
               Get exclusive deals, travel tips, and island updates delivered to your inbox.
             </p>
             <form className="flex flex-col xs:flex-row gap-3">
@@ -207,20 +207,20 @@ export function Footer({ className = '' }: FooterProps) {
 
         {/* Bottom */}
         <div className="border-t border-gray-800 mt-10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-400 text-base">
+          <p className="text-gray-300 text-base">
             &copy; {new Date().getFullYear()} Surf or Sound Realty. All rights reserved.
           </p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-base">
-            <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
+            <Link href="/privacy" className="text-gray-300 hover:text-white transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
+            <Link href="/terms" className="text-gray-300 hover:text-white transition-colors">
               Terms of Service
             </Link>
-            <Link href="/accessibility" className="text-gray-400 hover:text-white transition-colors">
+            <Link href="/accessibility" className="text-gray-300 hover:text-white transition-colors">
               Accessibility
             </Link>
-            <span className="text-gray-500">Press ? for keyboard shortcuts</span>
+            <span className="text-gray-400">Press ? for keyboard shortcuts</span>
           </div>
         </div>
       </div>

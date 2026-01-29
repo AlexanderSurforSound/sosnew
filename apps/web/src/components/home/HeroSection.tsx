@@ -218,7 +218,7 @@ export default function HeroSection() {
           transition={{ delay: 0.5, duration: 1 }}
           className="absolute top-8 left-1/2 -translate-x-1/2"
         >
-          <span className="text-white/60 text-sm tracking-[0.3em] uppercase font-light">
+          <span className="text-white/90 text-sm tracking-[0.3em] uppercase font-light">
             Hatteras Island • Outer Banks
           </span>
         </motion.div>
@@ -250,7 +250,7 @@ export default function HeroSection() {
             className="mt-8 text-lg sm:text-xl text-white/70 max-w-2xl mx-auto font-light leading-relaxed"
           >
             Seven villages. One unforgettable escape.
-            <span className="block mt-2 text-white/50 text-base">
+            <span className="block mt-2 text-white/80 text-base">
               The premier vacation rental collection on North Carolina's most iconic barrier island.
             </span>
           </motion.p>
@@ -324,7 +324,7 @@ export default function HeroSection() {
           </div>
 
           {/* Subtle helper text */}
-          <p className="text-center text-white/40 text-sm mt-4">
+          <p className="text-center text-white/80 text-sm mt-4">
             {MIN_NIGHTS}-night minimum stay
           </p>
         </motion.form>
@@ -341,7 +341,7 @@ export default function HeroSection() {
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             className="flex flex-col items-center gap-3"
           >
-            <span className="text-white/40 text-xs tracking-widest uppercase">Explore</span>
+            <span className="text-white/80 text-xs tracking-widest uppercase">Explore</span>
             <div className="w-px h-12 bg-gradient-to-b from-white/40 to-transparent" />
           </motion.div>
         </motion.div>
@@ -362,8 +362,8 @@ export default function HeroSection() {
           >
             <div className="flex items-center gap-3 text-sm">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span className="text-white/60">Right now on Hatteras</span>
-              <ChevronDown className={`w-4 h-4 text-white/40 transition-transform ${showForecast ? 'rotate-180' : ''}`} />
+              <span className="text-white/90">Right now on Hatteras</span>
+              <ChevronDown className={`w-4 h-4 text-white/80 transition-transform ${showForecast ? 'rotate-180' : ''}`} />
             </div>
             <div className="mt-2 flex gap-6">
               <div className="flex items-center gap-2">
@@ -372,17 +372,17 @@ export default function HeroSection() {
                   <div className="text-2xl font-light">
                     {weatherLoading ? '—' : `${weather?.temp || 72}°`}
                   </div>
-                  <div className="text-xs text-white/50">
+                  <div className="text-xs text-white/80">
                     {weather?.condition || 'Loading...'}
                   </div>
                 </div>
               </div>
               <div className="border-l border-white/20 pl-6">
                 <div className="text-2xl font-light flex items-center gap-1">
-                  <Wind className="w-4 h-4 text-white/50" />
+                  <Wind className="w-4 h-4 text-white/80" />
                   {weatherLoading ? '—' : `${weather?.windSpeed || 0}`}
                 </div>
-                <div className="text-xs text-white/50">
+                <div className="text-xs text-white/80">
                   MPH {weather?.windDirection || ''}
                 </div>
               </div>
@@ -390,7 +390,7 @@ export default function HeroSection() {
                 <div className="text-2xl font-light">
                   {weather?.sunset || '7:48 PM'}
                 </div>
-                <div className="text-xs text-white/50">Sunset</div>
+                <div className="text-xs text-white/80">Sunset</div>
               </div>
             </div>
           </button>
@@ -415,10 +415,10 @@ export default function HeroSection() {
                       return (
                         <div key={day.date} className="flex items-center justify-between text-white py-1.5 border-b border-white/10 last:border-0">
                           <span className="text-sm text-white/70 w-16">{dayName}</span>
-                          <span className="text-xs text-white/50 flex-1 text-center">{day.condition}</span>
+                          <span className="text-xs text-white/80 flex-1 text-center">{day.condition}</span>
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-medium">{day.high}°</span>
-                            <span className="text-xs text-white/50">{day.low}°</span>
+                            <span className="text-xs text-white/80">{day.low}°</span>
                           </div>
                           {day.precipitation > 0 && (
                             <span className="text-xs text-blue-300 ml-2">{day.precipitation}%</span>
@@ -435,17 +435,17 @@ export default function HeroSection() {
                       return (
                         <div key={i} className="flex items-center justify-between text-white py-1.5 border-b border-white/10 last:border-0">
                           <span className="text-sm text-white/70 w-16">{dayName}</span>
-                          <span className="text-xs text-white/50 flex-1 text-center">—</span>
+                          <span className="text-xs text-white/80 flex-1 text-center">—</span>
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-medium">—</span>
-                            <span className="text-xs text-white/50">—</span>
+                            <span className="text-xs text-white/80">—</span>
                           </div>
                         </div>
                       );
                     })
                   )}
                 </div>
-                <p className="text-xs text-white/40 mt-3 text-center">Click outside to close</p>
+                <p className="text-xs text-white/80 mt-3 text-center">Click outside to close</p>
               </motion.div>
             )}
           </AnimatePresence>

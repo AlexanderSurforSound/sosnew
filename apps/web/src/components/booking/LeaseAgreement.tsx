@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FileText,
@@ -17,10 +17,13 @@ import {
   Home,
   DollarSign,
   Edit3,
+  Loader2,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import SignaturePad from 'signature_pad';
 import { PortableText } from '@portabletext/react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 // Types for CMS content
 interface LeaseSection {
@@ -218,7 +221,9 @@ export function LeaseAgreement({
   const [showSignaturePad, setShowSignaturePad] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeInitialSection, setActiveInitialSection] = useState<string | null>(null);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const agreementRef = useRef<HTMLDivElement>(null);
+  const printContentRef = useRef<HTMLDivElement>(null);
 
   const guestInitials = `${guestInfo.firstName.charAt(0)}${guestInfo.lastName.charAt(0)}`.toUpperCase();
   const guestName = `${guestInfo.firstName} ${guestInfo.lastName}`;
@@ -289,6 +294,125 @@ export function LeaseAgreement({
       signedAt: new Date().toISOString(),
     });
   };
+
+  // Generate PDF of the lease agreement
+  const handleDownloadPdf = useCallback(async () => {
+    if (!agreementRef.current) return;
+
+    setIsGeneratingPdf(true);
+    try {
+      const element = agreementRef.current;
+      const originalHeight = element.style.height;
+      const originalOverflow = element.style.overflow;
+
+      // Temporarily expand to full height for capture
+      element.style.height = 'auto';
+      element.style.overflow = 'visible';
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        windowHeight: element.scrollHeight,
+      });
+
+      // Restore original styles
+      element.style.height = originalHeight;
+      element.style.overflow = originalOverflow;
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'letter',
+      });
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pageWidth - 20; // 10mm margin on each side
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 10; // Start with 10mm top margin
+
+      // Add first page
+      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+      heightLeft -= (pageHeight - 20);
+
+      // Add additional pages if needed
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight + 10;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= (pageHeight - 20);
+      }
+
+      const fileName = `Rental_Agreement_${propertyName.replace(/[^a-zA-Z0-9]/g, '_')}_${format(new Date(checkIn), 'yyyy-MM-dd')}.pdf`;
+      pdf.save(fileName);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('There was an error generating the PDF. Please try again.');
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  }, [propertyName, checkIn]);
+
+  // Print the lease agreement
+  const handlePrint = useCallback(() => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow || !agreementRef.current) return;
+
+    const content = agreementRef.current.innerHTML;
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Rental Agreement - ${propertyName}</title>
+          <style>
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              line-height: 1.6;
+              padding: 20px;
+              max-width: 800px;
+              margin: 0 auto;
+            }
+            h1 { font-size: 18px; text-align: center; margin-bottom: 20px; }
+            h2 { font-size: 14px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; }
+            p { margin: 10px 0; font-size: 12px; }
+            ul { margin: 10px 0; padding-left: 20px; font-size: 12px; }
+            li { margin: 5px 0; }
+            strong { font-weight: 600; }
+            .initial-box {
+              display: inline-block;
+              border: 1px solid #000;
+              padding: 5px 15px;
+              margin: 10px 0;
+              min-width: 60px;
+              text-align: center;
+            }
+            input { display: none; }
+            .bg-gray-50, .bg-green-50, .bg-ocean-50 { background: #f9fafb; padding: 10px; border-radius: 5px; }
+            @media print {
+              body { padding: 0; }
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          ${content}
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+
+    // Wait for content to load then print
+    setTimeout(() => {
+      printWindow.print();
+    }, 250);
+  }, [propertyName]);
 
   const todayDate = format(new Date(), 'MMMM d, yyyy');
   const checkInDate = format(new Date(checkIn), 'MMMM d, yyyy');
@@ -649,11 +773,22 @@ export function LeaseAgreement({
 
       {/* Print/Download */}
       <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
-        <button className="flex items-center gap-1 hover:text-gray-700">
-          <Download className="w-4 h-4" />
-          Download PDF
+        <button
+          onClick={handleDownloadPdf}
+          disabled={isGeneratingPdf}
+          className="flex items-center gap-1 hover:text-gray-700 disabled:opacity-50"
+        >
+          {isGeneratingPdf ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Download className="w-4 h-4" />
+          )}
+          {isGeneratingPdf ? 'Generating...' : 'Download PDF'}
         </button>
-        <button className="flex items-center gap-1 hover:text-gray-700">
+        <button
+          onClick={handlePrint}
+          className="flex items-center gap-1 hover:text-gray-700"
+        >
           <Printer className="w-4 h-4" />
           Print
         </button>

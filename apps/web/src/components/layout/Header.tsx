@@ -32,15 +32,15 @@ export function Header() {
       scrolled ? 'bg-[#0f172a]/95 backdrop-blur-md shadow-lg' : 'bg-[#0f172a]'
     }`}>
       {/* Top bar - same base color, slightly darker */}
-      <div className="bg-black/20 text-white/70 text-sm border-b border-white/5">
+      <div className="bg-black/20 text-white/90 text-sm border-b border-white/5">
         <div className="container-page py-2 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <a href="tel:800-237-1138" className="flex items-center gap-1.5 hover:text-white transition-colors">
               <Phone className="w-3.5 h-3.5" />
               <span>800.237.1138</span>
             </a>
-            <span className="hidden sm:inline text-white/40">|</span>
-            <span className="hidden sm:inline text-white/60">Hatteras Island, NC</span>
+            <span className="hidden sm:inline text-white/70">|</span>
+            <span className="hidden sm:inline text-white/80">Hatteras Island, NC</span>
           </div>
           <div className="hidden sm:flex items-center gap-6">
             <Link href="/about" className="hover:text-white transition-colors">About</Link>

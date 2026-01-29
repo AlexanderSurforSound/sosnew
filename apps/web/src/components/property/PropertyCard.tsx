@@ -148,7 +148,7 @@ export function PropertyCard({ property, showPrice = true, onQuickView, variant 
 
           {/* Property info */}
           <div>
-            <div className="flex items-center gap-2 text-white/70 text-sm mb-2">
+            <div className="flex items-center gap-2 text-white/90 text-sm mb-2">
               <MapPin className="w-4 h-4" />
               <span>{formatVillageName(property.village?.name)}</span>
             </div>
@@ -174,7 +174,7 @@ export function PropertyCard({ property, showPrice = true, onQuickView, variant 
                 <span className="text-3xl font-light text-white">
                   ${property.baseRate.toLocaleString()}
                 </span>
-                <span className="text-white/60">/ week</span>
+                <span className="text-white/90">/ week</span>
               </div>
             )}
           </div>
@@ -300,7 +300,7 @@ export function PropertyCard({ property, showPrice = true, onQuickView, variant 
       {/* Content */}
       <div className="p-5">
         {/* Location */}
-        <div className="flex items-center gap-1.5 text-gray-500 text-sm mb-2">
+        <div className="flex items-center gap-1.5 text-gray-600 text-sm mb-2">
           <MapPin className="w-3.5 h-3.5" />
           <span>{formatVillageName(property.village?.name)}</span>
         </div>
@@ -312,25 +312,25 @@ export function PropertyCard({ property, showPrice = true, onQuickView, variant 
 
         {/* Headline */}
         {property.headline && (
-          <p className="text-sm text-gray-500 mb-4 line-clamp-1">{property.headline}</p>
+          <p className="text-sm text-gray-600 mb-4 line-clamp-1">{property.headline}</p>
         )}
 
         {/* Stats */}
         <div className="flex items-center gap-5 text-gray-600 mb-4">
           <span className="flex items-center gap-1.5 text-sm">
-            <Bed className="w-4 h-4 text-gray-400" />
+            <Bed className="w-4 h-4 text-gray-600" />
             <span className="font-medium">{property.bedrooms}</span>
-            <span className="text-gray-400">beds</span>
+            <span className="text-gray-600">beds</span>
           </span>
           <span className="flex items-center gap-1.5 text-sm">
-            <Bath className="w-4 h-4 text-gray-400" />
+            <Bath className="w-4 h-4 text-gray-600" />
             <span className="font-medium">{property.bathrooms}</span>
-            <span className="text-gray-400">baths</span>
+            <span className="text-gray-600">baths</span>
           </span>
           <span className="flex items-center gap-1.5 text-sm">
-            <Users className="w-4 h-4 text-gray-400" />
+            <Users className="w-4 h-4 text-gray-600" />
             <span className="font-medium">{property.sleeps}</span>
-            <span className="text-gray-400">guests</span>
+            <span className="text-gray-600">guests</span>
           </span>
         </div>
 
@@ -341,7 +341,7 @@ export function PropertyCard({ property, showPrice = true, onQuickView, variant 
               <span className="text-2xl font-semibold text-gray-900 group-hover:text-ocean-600 transition-colors">
                 ${property.baseRate.toLocaleString()}
               </span>
-              <span className="text-gray-500 ml-1">/ week</span>
+              <span className="text-gray-600 ml-1">/ week</span>
             </div>
             <div className="flex items-center gap-1 text-amber-500">
               <Star className="w-4 h-4 fill-current" />

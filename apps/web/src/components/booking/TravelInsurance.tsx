@@ -8,7 +8,6 @@ import {
   X,
   ChevronDown,
   AlertTriangle,
-  Umbrella,
   Cloud,
   Car,
   Heart,
@@ -32,30 +31,18 @@ export interface InsurancePlan {
 
 const insurancePlans: InsurancePlan[] = [
   {
-    id: 'basic',
-    name: 'Basic Protection',
-    price: 0.05, // 5% of trip total
+    id: 'travel-protection',
+    name: 'Travel Protection',
+    price: 0.07, // 7% of trip total
     coverage: [
       'Trip cancellation (illness, injury)',
       'Trip interruption',
-      'Travel delay ($150/day)',
-      '24/7 travel assistance',
-    ],
-    maxCoverage: 5000,
-  },
-  {
-    id: 'premium',
-    name: 'Premium Protection',
-    price: 0.08, // 8% of trip total
-    coverage: [
-      'All Basic Protection benefits',
-      'Cancel for any reason (75% refund)',
       'Hurricane/storm coverage',
+      'Travel delay coverage',
+      '24/7 travel assistance',
       'Emergency evacuation',
-      'Baggage delay/loss ($1,000)',
-      'Rental property damage waiver',
     ],
-    maxCoverage: 15000,
+    maxCoverage: 10000,
   },
 ];
 
@@ -162,11 +149,10 @@ export function TravelInsurance({ tripTotal, onInsuranceChange, selectedPlan }: 
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
-              {plan.id === 'premium' && (
-                <div className="absolute -top-3 left-4 px-2 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-medium rounded-full">
-                  Most Popular
-                </div>
-              )}
+              {/* Recommended badge */}
+              <div className="absolute -top-3 left-4 px-2 py-0.5 bg-gradient-to-r from-ocean-500 to-cyan-500 text-white text-xs font-medium rounded-full">
+                Recommended
+              </div>
 
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">

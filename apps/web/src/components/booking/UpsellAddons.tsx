@@ -4,11 +4,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clock,
-  ShoppingBag,
-  Sparkles,
-  Umbrella,
-  Bike,
-  Fish,
+  Flame,
+  PawPrint,
   ChevronDown,
   Check,
   Info,
@@ -32,72 +29,36 @@ interface UpsellAddonsProps {
   selectedAddons: { id: string; quantity: number }[];
 }
 
+// Add-ons available for booking
+// Note: Fees may vary by property - actual amounts come from Track PMS
 const availableAddons: Addon[] = [
   {
     id: 'early-checkin',
     name: 'Early Check-in',
-    description: 'Arrive as early as 1:00 PM instead of 4:00 PM',
-    price: 75,
+    description: 'Arrive as early as 1:00 PM instead of 4:00 PM (subject to availability)',
+    price: 100, // Default - actual fee comes from Track PMS per property
     priceType: 'flat',
     icon: Clock,
     category: 'convenience',
     popular: true,
   },
   {
-    id: 'late-checkout',
-    name: 'Late Check-out',
-    description: 'Stay until 1:00 PM instead of 10:00 AM',
-    price: 75,
-    priceType: 'flat',
-    icon: Clock,
-    category: 'convenience',
-    popular: true,
-  },
-  {
-    id: 'grocery-delivery',
-    name: 'Grocery Pre-Stock',
-    description: 'Have groceries delivered and stocked before your arrival',
-    price: 45,
-    priceType: 'flat',
-    icon: ShoppingBag,
+    id: 'pool-heat',
+    name: 'Pool Heat',
+    description: 'Heat your private pool for comfortable swimming any time of year',
+    price: 500, // Default - actual fee comes from Track PMS per property
+    priceType: 'per_night',
+    icon: Flame,
     category: 'convenience',
   },
   {
-    id: 'mid-stay-cleaning',
-    name: 'Mid-Stay Cleaning',
-    description: 'Professional cleaning service during your stay',
-    price: 150,
+    id: 'pet-fee',
+    name: 'Pet Fee',
+    description: 'Bring your furry friend along (pet-friendly properties only)',
+    price: 200, // Default - actual fee comes from Track PMS per property
     priceType: 'flat',
-    icon: Sparkles,
+    icon: PawPrint,
     category: 'convenience',
-  },
-  {
-    id: 'beach-gear',
-    name: 'Beach Gear Package',
-    description: 'Chairs, umbrella, cooler, and beach toys',
-    price: 35,
-    priceType: 'per_day',
-    icon: Umbrella,
-    category: 'gear',
-    popular: true,
-  },
-  {
-    id: 'bike-rental',
-    name: 'Bike Rental',
-    description: '2 adult beach cruiser bikes',
-    price: 25,
-    priceType: 'per_day',
-    icon: Bike,
-    category: 'gear',
-  },
-  {
-    id: 'fishing-gear',
-    name: 'Fishing Gear',
-    description: 'Rods, tackle box, and bait voucher',
-    price: 40,
-    priceType: 'per_day',
-    icon: Fish,
-    category: 'experience',
   },
 ];
 
@@ -106,7 +67,7 @@ export function UpsellAddons({ nights, onAddonsChange, selectedAddons }: UpsellA
 
   const categories = [
     { id: 'convenience', label: 'Convenience', description: 'Make your trip easier' },
-    { id: 'gear', label: 'Beach Gear', description: 'Everything for the beach' },
+    { id: 'gear', label: 'Rentals', description: 'Gear for your stay' },
     { id: 'experience', label: 'Experiences', description: 'Enhance your vacation' },
   ];
 
@@ -134,6 +95,9 @@ export function UpsellAddons({ nights, onAddonsChange, selectedAddons }: UpsellA
     return sum + (addon ? calculateAddonPrice(addon) * selected.quantity : 0);
   }, 0);
 
+  // Get popular add-ons
+  const popularAddons = availableAddons.filter((a) => a.popular);
+
   return (
     <div className="space-y-6">
       <div>
@@ -142,22 +106,21 @@ export function UpsellAddons({ nights, onAddonsChange, selectedAddons }: UpsellA
       </div>
 
       {/* Popular Add-ons Banner */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
-          <span className="font-semibold text-amber-800">Most Popular Add-ons</span>
-        </div>
-        <div className="grid md:grid-cols-3 gap-3">
-          {availableAddons
-            .filter((a) => a.popular)
-            .map((addon) => {
+      {popularAddons.length > 0 && (
+        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
+            <span className="font-semibold text-amber-800">Popular Add-on</span>
+          </div>
+          <div className="space-y-3">
+            {popularAddons.map((addon) => {
               const Icon = addon.icon;
               const isSelected = selectedAddons.some((s) => s.id === addon.id);
               return (
                 <button
                   key={addon.id}
                   onClick={() => toggleAddon(addon.id)}
-                  className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all text-left ${
+                  className={`w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all text-left ${
                     isSelected
                       ? 'border-ocean-500 bg-ocean-50'
                       : 'border-transparent bg-white hover:border-gray-300'
@@ -171,24 +134,32 @@ export function UpsellAddons({ nights, onAddonsChange, selectedAddons }: UpsellA
                     {isSelected ? <Check className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 text-sm truncate">{addon.name}</p>
-                    <p className="text-sm text-gray-500">
-                      ${calculateAddonPrice(addon)}
-                      {addon.priceType !== 'flat' && (
-                        <span className="text-xs"> for {nights} nights</span>
-                      )}
-                    </p>
+                    <p className="font-medium text-gray-900">{addon.name}</p>
+                    <p className="text-sm text-gray-500">{addon.description}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-gray-900">${calculateAddonPrice(addon)}</p>
+                    {addon.priceType !== 'flat' && (
+                      <p className="text-xs text-gray-500">
+                        ${addon.price}/{addon.priceType === 'per_day' ? 'day' : 'night'}
+                      </p>
+                    )}
                   </div>
                 </button>
               );
             })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Category Accordions */}
       <div className="space-y-3">
         {categories.map((category) => {
           const categoryAddons = availableAddons.filter((a) => a.category === category.id);
+
+          // Skip empty categories
+          if (categoryAddons.length === 0) return null;
+
           const selectedInCategory = categoryAddons.filter((a) =>
             selectedAddons.some((s) => s.id === a.id)
           ).length;
@@ -289,6 +260,13 @@ export function UpsellAddons({ nights, onAddonsChange, selectedAddons }: UpsellA
             </span>
           </div>
           <span className="font-semibold text-lg">+${totalAddonsPrice}</span>
+        </div>
+      )}
+
+      {/* No add-ons message */}
+      {availableAddons.length === 0 && (
+        <div className="text-center py-8 text-gray-500">
+          <p>No add-ons available for this property.</p>
         </div>
       )}
     </div>
