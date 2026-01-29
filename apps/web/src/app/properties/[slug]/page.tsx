@@ -1,43 +1,23 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import * as Track from '@/graphql/services/track';
+import { api } from '@/lib/api';
 import PropertyDetailClient from './PropertyDetailClient';
 
 interface PageProps {
   params: { slug: string };
 }
 
-// Helper to find property by slug from Track API
-async function getPropertyBySlug(slug: string) {
-  try {
-    const { units } = await Track.getUnits(1, 1000); // Get all units
-    const nodes = await Track.getNodes();
-    const nodesMap = new Map(nodes.map((n) => [n.id, n]));
-
-    for (const unit of units) {
-      const images = await Track.getUnitImages(unit.id, 10);
-      const property = Track.mapTrackUnitToProperty(unit, nodesMap.get(unit.nodeId), images);
-      if (property.slug === slug) {
-        return property;
-      }
-    }
-    return null;
-  } catch (error) {
-    console.error('Failed to fetch property:', error);
-    return null;
-  }
-}
-
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const property = await getPropertyBySlug(params.slug);
+  const property = await api.getProperty(params.slug).catch(() => null);
 
   if (!property) {
     return { title: 'Property Not Found' };
   }
 
   return {
-    title: property.name,
+    title: property.seo?.title || property.name,
     description:
+      property.seo?.description ||
       property.headline ||
       `${property.bedrooms} bedroom vacation rental in ${property.village?.name || 'Hatteras Island'}`,
     openGraph: {
@@ -52,7 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function PropertyDetailPage({ params }: PageProps) {
-  const property = await getPropertyBySlug(params.slug);
+  const property = await api.getProperty(params.slug).catch(() => null);
 
   if (!property) {
     notFound();
