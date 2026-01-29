@@ -142,17 +142,19 @@ export function DateSelection({
           <h3 className="font-medium mb-3">Price Summary</h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span>${pricing.baseRate.toLocaleString()} x {nights} nights</span>
+              <span>Rental ({pricing.weeks} week{pricing.weeks !== 1 ? 's' : ''})</span>
               <span>${pricing.accommodationTotal.toLocaleString()}</span>
             </div>
             <div className="flex justify-between">
-              <span>Cleaning fee</span>
-              <span>${pricing.cleaningFee.toLocaleString()}</span>
+              <span>Home Service Fee</span>
+              <span>${pricing.homeServiceFee.toLocaleString()}</span>
             </div>
-            <div className="flex justify-between">
-              <span>Service fee</span>
-              <span>${pricing.serviceFee.toLocaleString()}</span>
-            </div>
+            {pricing.damageWaiver && (
+              <div className="flex justify-between">
+                <span>Stay Secure Deposit</span>
+                <span>${pricing.damageWaiver.toLocaleString()}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span>Taxes</span>
               <span>${pricing.taxes.toLocaleString()}</span>

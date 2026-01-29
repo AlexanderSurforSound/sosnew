@@ -1,6 +1,9 @@
+'use client';
+
+import { useState } from 'react';
 import Image from 'next/image';
 import { format, differenceInDays } from 'date-fns';
-import { Bed, Bath, Users, MapPin } from 'lucide-react';
+import { Bed, Bath, Users, MapPin, Info, ToggleLeft, ToggleRight } from 'lucide-react';
 import type { PropertyDetail, Pricing } from '@/types';
 
 interface BookingSummaryProps {
@@ -22,12 +25,19 @@ export function BookingSummary({
   guests,
   pricing,
 }: BookingSummaryProps) {
+  // Toggle between nightly and weekly rate display
+  const [showNightly, setShowNightly] = useState(property.isFlexStay ?? false);
+
   const nights =
     checkIn && checkOut
       ? differenceInDays(new Date(checkOut), new Date(checkIn))
       : 0;
 
+  const weeks = Math.ceil(nights / 7);
   const primaryImage = property.images.find((img) => img.isPrimary) || property.images[0];
+
+  // Calculate per-night rate for display
+  const perNightRate = pricing ? Math.round(pricing.accommodationTotal / nights) : 0;
 
   return (
     <div className="bg-white rounded-xl shadow-lg border overflow-hidden">
@@ -43,6 +53,12 @@ export function BookingSummary({
         ) : (
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
             <span className="text-gray-400">No image</span>
+          </div>
+        )}
+        {/* Flex Stay Badge */}
+        {property.isFlexStay && (
+          <div className="absolute top-3 left-3 px-2 py-1 bg-ocean-600 text-white text-xs font-medium rounded">
+            Flex Stay
           </div>
         )}
       </div>
@@ -97,39 +113,138 @@ export function BookingSummary({
                 {guests.pets > 0 && `, ${guests.pets} pet${guests.pets !== 1 ? 's' : ''}`}
               </span>
             </div>
+            <div className="mt-1 text-sm">
+              <span className="text-gray-500">Duration:</span>{' '}
+              <span className="font-medium">
+                {nights} night{nights !== 1 ? 's' : ''}
+                {!showNightly && ` (${weeks} week${weeks !== 1 ? 's' : ''})`}
+              </span>
+            </div>
           </div>
         )}
 
         {/* Price Breakdown */}
         {pricing && nights > 0 && (
           <div className="py-4">
-            <h4 className="font-medium mb-3">Price Details</h4>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium">Price Details</h4>
+              {/* Toggle for nightly/weekly view */}
+              <button
+                onClick={() => setShowNightly(!showNightly)}
+                className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700"
+              >
+                {showNightly ? (
+                  <ToggleRight className="w-4 h-4 text-ocean-600" />
+                ) : (
+                  <ToggleLeft className="w-4 h-4" />
+                )}
+                <span>{showNightly ? 'Per night' : 'Per week'}</span>
+              </button>
+            </div>
+
             <div className="space-y-2 text-sm">
+              {/* Accommodation */}
               <div className="flex justify-between">
                 <span className="text-gray-600">
-                  ${pricing.baseRate.toLocaleString()} x {nights} nights
+                  {showNightly ? (
+                    <>
+                      ${perNightRate.toLocaleString()} x {nights} night{nights !== 1 ? 's' : ''}
+                    </>
+                  ) : (
+                    <>
+                      Rental ({weeks} week{weeks !== 1 ? 's' : ''})
+                    </>
+                  )}
                 </span>
                 <span>${pricing.accommodationTotal.toLocaleString()}</span>
               </div>
+
+              {/* Home Service Fee (Cleaning) */}
               <div className="flex justify-between">
-                <span className="text-gray-600">Cleaning fee</span>
-                <span>${pricing.cleaningFee.toLocaleString()}</span>
+                <span className="text-gray-600">Home Service Fee</span>
+                <span>${pricing.homeServiceFee.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Service fee</span>
-                <span>${pricing.serviceFee.toLocaleString()}</span>
+
+              {/* Pet Fee - only show if pets */}
+              {pricing.petFee && pricing.petFee > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">
+                    Pet Fee {!showNightly && `(${weeks} week${weeks !== 1 ? 's' : ''})`}
+                  </span>
+                  <span>${pricing.petFee.toLocaleString()}</span>
+                </div>
+              )}
+
+              {/* Pool Heat - only show if selected */}
+              {pricing.poolHeat && pricing.poolHeat > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">
+                    Pool Heat {!showNightly && `(${weeks} week${weeks !== 1 ? 's' : ''})`}
+                  </span>
+                  <span>${pricing.poolHeat.toLocaleString()}</span>
+                </div>
+              )}
+
+              {/* Damage Waiver / Stay Secure */}
+              {pricing.damageWaiver && pricing.damageWaiver > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Stay Secure Deposit</span>
+                  <span>${pricing.damageWaiver.toLocaleString()}</span>
+                </div>
+              )}
+
+              {/* Travel Insurance - only show if selected */}
+              {pricing.travelInsurance && pricing.travelInsurance > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Travel Insurance</span>
+                  <span>${pricing.travelInsurance.toLocaleString()}</span>
+                </div>
+              )}
+
+              {/* Convenience Fee - only show if applicable */}
+              {pricing.convenienceFee && pricing.convenienceFee > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Convenience Fee</span>
+                  <span>${pricing.convenienceFee.toLocaleString()}</span>
+                </div>
+              )}
+
+              {/* Subtotal */}
+              <div className="flex justify-between pt-2 border-t">
+                <span className="text-gray-600">Subtotal</span>
+                <span>${pricing.subtotal.toLocaleString()}</span>
               </div>
+
+              {/* Taxes */}
               <div className="flex justify-between">
                 <span className="text-gray-600">Taxes</span>
                 <span>${pricing.taxes.toLocaleString()}</span>
               </div>
+
+              {/* Total */}
               <div className="flex justify-between font-semibold text-base pt-3 border-t mt-3">
                 <span>Total (USD)</span>
                 <span>${pricing.total.toLocaleString()}</span>
               </div>
+
+              {/* Per-night breakdown when showing weekly */}
+              {!showNightly && nights > 0 && (
+                <div className="text-center text-xs text-gray-500 pt-2">
+                  ${Math.round(pricing.total / nights).toLocaleString()} per night average
+                </div>
+              )}
             </div>
           </div>
         )}
+
+        {/* Pricing Note */}
+        <div className="flex items-start gap-2 py-3 border-t text-xs text-gray-500">
+          <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+          <p>
+            Final pricing is calculated by our reservation system and may vary based on
+            selected options and promotions.
+          </p>
+        </div>
 
         {/* Support */}
         <div className="pt-4 border-t text-center">

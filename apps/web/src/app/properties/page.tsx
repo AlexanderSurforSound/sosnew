@@ -84,9 +84,6 @@ export default async function PropertiesPage({
     // Return empty results on error
   }
 
-  // Check if there's an AI search query
-  const aiSearchQuery = searchParams.aiSearch || searchParams.q;
-
   return (
     <PropertiesPageClient
       properties={properties}
@@ -95,7 +92,6 @@ export default async function PropertiesPage({
       currentPage={params.page}
       currentFilters={params}
       searchParams={searchParams as Record<string, string | undefined>}
-      aiSearchQuery={aiSearchQuery}
     />
   );
 }

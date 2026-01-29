@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Filter, Sparkles, X, MapPin, Bed, PawPrint, Grid, Map as MapIcon } from 'lucide-react';
+import { Filter, X, MapPin, Bed, PawPrint, Grid, Map as MapIcon, Home } from 'lucide-react';
 import { PropertyGrid } from '@/components/property/PropertyGrid';
 import { AdvancedFilters, MobileFiltersModal } from '@/components/search/AdvancedFilters';
-import { AISearchBar } from '@/components/search/AISearchBar';
+import { PropertySearchBar } from '@/components/search/PropertySearchBar';
 import { SortDropdown } from '@/components/search/SortDropdown';
 import { Pagination } from '@/components/ui/Pagination';
 import type { Property, PropertyQueryParams } from '@/types';
@@ -34,7 +34,6 @@ interface PropertiesPageClientProps {
   currentPage: number;
   currentFilters: PropertyQueryParams;
   searchParams: Record<string, string | undefined>;
-  aiSearchQuery?: string;
 }
 
 export function PropertiesPageClient({
@@ -44,11 +43,9 @@ export function PropertiesPageClient({
   currentPage,
   currentFilters,
   searchParams,
-  aiSearchQuery,
 }: PropertiesPageClientProps) {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
-  const [showAIInsight, setShowAIInsight] = useState(!!aiSearchQuery);
 
   // Active filter count for mobile indicator
   const activeFilterCount = [
@@ -78,55 +75,41 @@ export function PropertiesPageClient({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* AI Search Header - seamless with header */}
-      <div className="bg-[#0f172a] text-white relative overflow-hidden">
-        {/* Subtle gradient overlay for depth */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20" />
+      {/* Search Header */}
+      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 text-white relative overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="search-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                <circle cx="20" cy="20" r="1.5" fill="white" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#search-pattern)" />
+          </svg>
+        </div>
 
-        <div className="container-page py-12 relative z-10">
+        <div className="container-page py-10 md:py-14 relative z-10">
           <div className="text-center mb-8">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 bg-gradient-to-r from-white via-white to-cyan-200 bg-clip-text text-transparent">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3">
               Find Your Perfect Beach Home
             </h1>
-            <p className="text-white/60 text-lg">Search 600+ vacation rentals on Hatteras Island</p>
+            <p className="text-white/70 text-lg">
+              {total} vacation rentals across Hatteras Island's seven villages
+            </p>
           </div>
-          <AISearchBar variant="hero" className="max-w-3xl mx-auto" />
+          <PropertySearchBar
+            variant="hero"
+            className="max-w-5xl mx-auto"
+            initialValues={{
+              village: currentFilters.village,
+              checkIn: currentFilters.checkIn,
+              checkOut: currentFilters.checkOut,
+              guests: currentFilters.guests,
+            }}
+          />
         </div>
       </div>
-
-      {/* AI Search Insight Banner */}
-      <AnimatePresence>
-        {showAIInsight && aiSearchQuery && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-200"
-          >
-            <div className="container-page py-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Sparkles className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">AI Search Results</p>
-                    <p className="text-sm text-gray-600">
-                      Showing results for: "<span className="font-medium">{aiSearchQuery}</span>"
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowAIInsight(false)}
-                  className="p-2 hover:bg-white/50 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5 text-gray-500" />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Mobile Filter Bar */}
       <div className="lg:hidden sticky top-16 z-40 bg-white border-b shadow-sm">
@@ -177,12 +160,6 @@ export function PropertiesPageClient({
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <h2 className="text-2xl font-bold text-gray-900">Vacation Rentals</h2>
-                  {aiSearchQuery && (
-                    <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full flex items-center gap-1">
-                      <Sparkles className="w-3 h-3" />
-                      AI
-                    </span>
-                  )}
                 </div>
                 <p className="text-gray-600">
                   {total} {total === 1 ? 'property' : 'properties'} found
@@ -279,11 +256,11 @@ function NoResults() {
   return (
     <div className="text-center py-16 px-4">
       <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <Sparkles className="w-10 h-10 text-gray-400" />
+        <Home className="w-10 h-10 text-gray-400" />
       </div>
       <h3 className="text-xl font-semibold text-gray-900 mb-2">No properties found</h3>
       <p className="text-gray-600 mb-6 max-w-md mx-auto">
-        We couldn't find any properties matching your criteria. Try adjusting your filters or search with different terms.
+        We couldn't find any properties matching your criteria. Try adjusting your filters or search with different dates.
       </p>
       <a
         href="/properties"

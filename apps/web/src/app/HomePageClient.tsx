@@ -11,10 +11,8 @@ import {
   Users,
   Home,
   ArrowRight,
-  Check,
-  Sparkles,
+  Search,
   Calendar,
-  Car,
   Utensils,
   Sun,
   Wind,
@@ -22,7 +20,7 @@ import {
   Camera
 } from 'lucide-react';
 import HeroSection from '@/components/home/HeroSection';
-import { DreamMatcher } from '@/components/search/DreamMatcher';
+import { PropertySearchBar } from '@/components/search/PropertySearchBar';
 import { PropertyCard } from '@/components/property/PropertyCard';
 import RecentlyViewed from '@/components/property/RecentlyViewed';
 import PersonalizedRecommendations from '@/components/property/PersonalizedRecommendations';
@@ -150,15 +148,76 @@ export default function HomePageClient({ featuredProperties }: HomePageClientPro
       {/* Personalized Recommendations */}
       <PersonalizedRecommendations />
 
-      {/* AI Dream Matcher */}
-      <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
-        <div className="container-page">
+      {/* Quick Search Section */}
+      <section className="py-16 bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 text-white relative overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="home-search-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                <circle cx="20" cy="20" r="1.5" fill="white" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#home-search-pattern)" />
+          </svg>
+        </div>
+
+        <div className="container-page relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="text-center mb-8"
           >
-            <DreamMatcher />
+            <h2 className="text-3xl md:text-4xl font-bold mb-3">
+              Start Your Search
+            </h2>
+            <p className="text-white/70 text-lg max-w-2xl mx-auto">
+              Find the perfect vacation rental from over 600 homes across Hatteras Island
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            <PropertySearchBar variant="hero" className="max-w-5xl mx-auto" />
+          </motion.div>
+
+          {/* Quick Links */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="mt-8 flex flex-wrap justify-center gap-4"
+          >
+            <Link
+              href="/properties?petFriendly=true"
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition-colors"
+            >
+              Pet Friendly Homes
+            </Link>
+            <Link
+              href="/properties?amenities=oceanfront"
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition-colors"
+            >
+              Oceanfront Properties
+            </Link>
+            <Link
+              href="/properties?amenities=private-pool"
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition-colors"
+            >
+              Homes with Pool
+            </Link>
+            <Link
+              href="/properties?minBedrooms=5"
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition-colors"
+            >
+              Large Group Rentals
+            </Link>
           </motion.div>
         </div>
       </section>

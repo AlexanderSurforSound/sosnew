@@ -25,7 +25,7 @@ import { PaymentForm } from '@/components/booking/PaymentForm';
 import { BookingSummary } from '@/components/booking/BookingSummary';
 import { UpsellAddons, availableAddons } from '@/components/booking/UpsellAddons';
 import { TravelInsurance, InsurancePlan, insurancePlans } from '@/components/booking/TravelInsurance';
-import { PaymentOptions, PaymentOption } from '@/components/booking/PaymentOptions';
+import { PaymentOptions, PaymentPlanType, PaymentMethodType } from '@/components/booking/PaymentOptions';
 import { LeaseAgreement } from '@/components/booking/LeaseAgreement';
 import { differenceInDays } from 'date-fns';
 import { FileText } from 'lucide-react';
@@ -55,7 +55,8 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
   const [selectedInsurance, setSelectedInsurance] = useState<InsurancePlan | null>(null);
 
   // Payment option state
-  const [paymentOption, setPaymentOption] = useState<PaymentOption>('full');
+  const [paymentPlan, setPaymentPlan] = useState<PaymentPlanType>('one');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>('credit');
 
   // Agreement state
   const [signature, setSignature] = useState<string | null>(null);
@@ -94,6 +95,17 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
     : 0;
 
   const grandTotal = (pricing?.total || 0) + addonsTotal + insuranceTotal;
+
+  // Helper to calculate first payment amount based on payment plan
+  const getFirstPaymentAmount = (total: number, plan: PaymentPlanType): number => {
+    const percentages: Record<PaymentPlanType, number> = {
+      one: 1.0,    // 100%
+      two: 0.55,   // 55%
+      three: 0.30, // 30%
+      four: 0.30,  // 30%
+    };
+    return Math.round(total * percentages[plan]);
+  };
 
   // Load property if not in store
   useEffect(() => {
@@ -149,8 +161,10 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
         },
         payment: {
           token: paymentToken,
-          amount: paymentOption === 'full' ? grandTotal : Math.round(grandTotal * 0.5),
-          type: paymentOption === 'split3' ? 'deposit' : paymentOption,
+          amount: getFirstPaymentAmount(grandTotal, paymentPlan),
+          type: paymentPlan === 'one' ? 'full' : 'deposit',
+          method: paymentMethod,
+          plan: paymentPlan,
         },
       });
 
@@ -358,19 +372,15 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                     <PaymentOptions
                       totalAmount={grandTotal}
                       checkInDate={checkIn}
-                      selectedOption={paymentOption}
-                      onPaymentOptionChange={setPaymentOption}
+                      selectedOption={paymentPlan}
+                      onPaymentOptionChange={setPaymentPlan}
+                      selectedMethod={paymentMethod}
+                      onPaymentMethodChange={setPaymentMethod}
                     />
 
                     <div className="border-t pt-8">
                       <PaymentForm
-                        amount={
-                          paymentOption === 'full'
-                            ? grandTotal
-                            : paymentOption === 'deposit'
-                            ? Math.round(grandTotal * 0.5)
-                            : Math.round(grandTotal / 3)
-                        }
+                        amount={getFirstPaymentAmount(grandTotal, paymentPlan)}
                         onBack={goBack}
                         onSubmit={handlePaymentSubmit}
                         isLoading={isLoading}

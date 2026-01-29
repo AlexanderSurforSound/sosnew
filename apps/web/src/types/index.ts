@@ -25,6 +25,9 @@ export interface Property {
   locality?: string;
   region?: string;
   postal?: string;
+  // Flex stay / partial week booking
+  isFlexStay?: boolean; // Properties with "Partial Weeks - Yes" amenity
+  minNights?: number; // Minimum nights (3 for flex, 7 for weekly)
   // Computed/convenience fields
   primaryImage?: string;
   pricePerNight?: number;
@@ -40,7 +43,7 @@ export interface PropertyDetail extends Property {
   wifiName?: string;
   wifiPassword?: string;
   localTips?: string;
-  address: Address;
+  address?: Address;
   seo?: {
     title?: string;
     description?: string;
@@ -163,6 +166,8 @@ export interface CreateReservationRequest {
     token: string;
     amount: number;
     type: 'full' | 'deposit';
+    method?: 'credit' | 'debit' | 'mail';
+    plan?: 'one' | 'two' | 'three' | 'four';
   };
 }
 
