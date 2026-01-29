@@ -174,13 +174,13 @@ export default function AdvancedBookingWidget({
         <div className="flex items-baseline justify-between mb-2">
           <div>
             <span className="text-2xl font-bold text-gray-900">${baseRate}</span>
-            <span className="text-gray-500"> / night</span>
+            <span className="text-gray-600"> / night</span>
           </div>
           <div className="flex items-center gap-1 text-sm">
             <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
             <span className="font-semibold">{rating}</span>
-            <span className="text-gray-400">·</span>
-            <span className="text-gray-500">{reviewCount} reviews</span>
+            <span className="text-gray-600">·</span>
+            <span className="text-gray-600">{reviewCount} reviews</span>
           </div>
         </div>
       </div>
@@ -193,14 +193,14 @@ export default function AdvancedBookingWidget({
         >
           <div className="grid grid-cols-2 divide-x divide-gray-300">
             <div className="p-3">
-              <label className="text-xs font-semibold text-gray-500 uppercase">Check-in</label>
-              <p className={`font-medium ${checkIn ? 'text-gray-900' : 'text-gray-400'}`}>
+              <label className="text-xs font-semibold text-gray-600 uppercase">Check-in</label>
+              <p className={`font-medium ${checkIn ? 'text-gray-900' : 'text-gray-600'}`}>
                 {formatDate(checkIn)}
               </p>
             </div>
             <div className="p-3">
-              <label className="text-xs font-semibold text-gray-500 uppercase">Checkout</label>
-              <p className={`font-medium ${checkOut ? 'text-gray-900' : 'text-gray-400'}`}>
+              <label className="text-xs font-semibold text-gray-600 uppercase">Checkout</label>
+              <p className={`font-medium ${checkOut ? 'text-gray-900' : 'text-gray-600'}`}>
                 {formatDate(checkOut)}
               </p>
             </div>
@@ -236,7 +236,7 @@ export default function AdvancedBookingWidget({
 
               <div className="grid grid-cols-7 gap-1 mb-2">
                 {days.map((day) => (
-                  <div key={day} className="h-10 flex items-center justify-center text-xs font-medium text-gray-500">
+                  <div key={day} className="h-10 flex items-center justify-center text-xs font-medium text-gray-600">
                     {day}
                   </div>
                 ))}
@@ -272,13 +272,13 @@ export default function AdvancedBookingWidget({
             className="w-full flex items-center justify-between p-3 border border-gray-300 rounded-xl hover:border-gray-400 transition-colors"
           >
             <div>
-              <label className="text-xs font-semibold text-gray-500 uppercase block text-left">Guests</label>
+              <label className="text-xs font-semibold text-gray-600 uppercase block text-left">Guests</label>
               <p className="font-medium text-gray-900 text-left">
                 {totalGuests} guest{totalGuests !== 1 ? 's' : ''}
                 {guests.pets > 0 && `, ${guests.pets} pet${guests.pets !== 1 ? 's' : ''}`}
               </p>
             </div>
-            <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${showGuests ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-5 h-5 text-gray-600 transition-transform ${showGuests ? 'rotate-180' : ''}`} />
           </button>
 
           <AnimatePresence>
@@ -385,12 +385,12 @@ export default function AdvancedBookingWidget({
           )}
         </button>
 
-        <p className="text-center text-xs text-gray-500 mt-2">
+        <p className="text-center text-xs text-gray-600 mt-2">
           {MIN_NIGHTS}-night minimum stay required
         </p>
 
         {/* Trust indicators */}
-        <div className="flex items-center justify-center gap-4 mt-4 text-xs text-gray-500">
+        <div className="flex items-center justify-center gap-4 mt-4 text-xs text-gray-600">
           <span className="flex items-center gap-1">
             <Shield className="w-4 h-4" />
             Secure booking

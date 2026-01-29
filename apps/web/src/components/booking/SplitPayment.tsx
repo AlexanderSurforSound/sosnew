@@ -187,7 +187,7 @@ export default function SplitPayment({ totalAmount, onConfirm }: SplitPaymentPro
               <div className="p-6 space-y-6">
                 {/* Total Amount */}
                 <div className="p-4 bg-gray-50 rounded-xl text-center">
-                  <p className="text-sm text-gray-500 mb-1">Total Amount</p>
+                  <p className="text-sm text-gray-600 mb-1">Total Amount</p>
                   <p className="text-3xl font-bold text-gray-900">${totalAmount.toLocaleString()}</p>
                 </div>
 
@@ -268,7 +268,7 @@ export default function SplitPayment({ totalAmount, onConfirm }: SplitPaymentPro
                               {getStatusBadge(participant.status)}
                             </div>
                             {participant.email && (
-                              <p className="text-sm text-gray-500">{participant.email}</p>
+                              <p className="text-sm text-gray-600">{participant.email}</p>
                             )}
                           </div>
                           {participant.id !== '1' && (
@@ -276,7 +276,7 @@ export default function SplitPayment({ totalAmount, onConfirm }: SplitPaymentPro
                               onClick={() => removeParticipant(participant.id)}
                               className="p-1 hover:bg-gray-200 rounded-lg transition-colors"
                             >
-                              <X className="w-4 h-4 text-gray-400" />
+                              <X className="w-4 h-4 text-gray-600" />
                             </button>
                           )}
                         </div>
@@ -294,15 +294,15 @@ export default function SplitPayment({ totalAmount, onConfirm }: SplitPaymentPro
                                 max={100}
                                 className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                               />
-                              <span className="text-gray-500">%</span>
-                              <span className="text-gray-400">=</span>
+                              <span className="text-gray-600">%</span>
+                              <span className="text-gray-600">=</span>
                               <span className="font-semibold text-gray-900">
                                 ${participant.amount.toLocaleString()}
                               </span>
                             </div>
                           ) : splitType === 'custom' ? (
                             <div className="flex-1 flex items-center gap-2">
-                              <span className="text-gray-500">$</span>
+                              <span className="text-gray-600">$</span>
                               <input
                                 type="number"
                                 value={participant.amount}
@@ -313,7 +313,7 @@ export default function SplitPayment({ totalAmount, onConfirm }: SplitPaymentPro
                                 max={totalAmount}
                                 className="w-28 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                               />
-                              <span className="text-gray-400 text-sm">
+                              <span className="text-gray-600 text-sm">
                                 ({participant.percentage}%)
                               </span>
                             </div>
@@ -322,7 +322,7 @@ export default function SplitPayment({ totalAmount, onConfirm }: SplitPaymentPro
                               <span className="text-2xl font-bold text-gray-900">
                                 ${participant.amount.toLocaleString()}
                               </span>
-                              <span className="text-gray-500 ml-2">
+                              <span className="text-gray-600 ml-2">
                                 ({participant.percentage.toFixed(1)}%)
                               </span>
                             </div>
@@ -415,7 +415,7 @@ export default function SplitPayment({ totalAmount, onConfirm }: SplitPaymentPro
                   </button>
                 </div>
 
-                <p className="text-xs text-gray-500 text-center">
+                <p className="text-xs text-gray-600 text-center">
                   Each participant will receive an email with a secure payment link.
                 </p>
               </div>

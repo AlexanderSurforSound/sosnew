@@ -211,7 +211,7 @@ export default function PriceCalendar({
         {/* Day headers */}
         <div className="grid grid-cols-7 gap-1 mb-2">
           {days.map((day) => (
-            <div key={day} className="text-center text-xs font-medium text-gray-500 py-2">
+            <div key={day} className="text-center text-xs font-medium text-gray-600 py-2">
               {day}
             </div>
           ))}
@@ -287,7 +287,7 @@ export default function PriceCalendar({
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">Select Dates</h2>
-            <p className="text-sm text-gray-500">Prices vary by date and demand</p>
+            <p className="text-sm text-gray-600">Prices vary by date and demand</p>
           </div>
           <button
             onClick={() => setFlexibleMode(!flexibleMode)}
@@ -344,7 +344,7 @@ export default function PriceCalendar({
                       disabled={isPast}
                       className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                         isPast
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          ? 'bg-gray-100 text-gray-600 cursor-not-allowed'
                           : flexibleMonths.includes(index)
                           ? 'bg-ocean-600 text-white'
                           : 'bg-white border border-gray-300 text-gray-700 hover:border-ocean-300'
@@ -430,7 +430,7 @@ export default function PriceCalendar({
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-600">
                         {selectedCheckIn?.toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
@@ -441,13 +441,13 @@ export default function PriceCalendar({
                           day: 'numeric',
                         })}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-600">
                         {totalPrice.nights} nights · ${totalPrice.average}/night avg
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="text-2xl font-bold text-gray-900">${totalPrice.total}</p>
-                      <p className="text-xs text-gray-500">before fees & taxes</p>
+                      <p className="text-xs text-gray-600">before fees & taxes</p>
                     </div>
                   </div>
 

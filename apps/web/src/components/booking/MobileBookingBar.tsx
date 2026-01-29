@@ -97,11 +97,11 @@ export function MobileBookingBar({
                     <div className="flex items-center gap-3">
                       <Calendar className="w-5 h-5 text-primary" />
                       <div className="text-left">
-                        <div className="text-sm text-gray-500">Check-in → Check-out</div>
+                        <div className="text-sm text-gray-600">Check-in → Check-out</div>
                         <div className="font-semibold text-primary">{formatDateRange()}</div>
                       </div>
                     </div>
-                    <ChevronUp className="w-5 h-5 text-gray-400" />
+                    <ChevronUp className="w-5 h-5 text-gray-600" />
                   </button>
                 </div>
               </motion.div>
@@ -118,16 +118,16 @@ export function MobileBookingBar({
               >
                 <div className="flex items-baseline gap-2">
                   {hasDiscount && (
-                    <span className="text-sm text-gray-400 line-through">
+                    <span className="text-sm text-gray-600 line-through">
                       ${baseRate.toLocaleString()}
                     </span>
                   )}
                   <span className="text-2xl font-bold text-primary">
                     ${displayPrice.toLocaleString()}
                   </span>
-                  <span className="text-gray-500">/week</span>
+                  <span className="text-gray-600">/week</span>
                 </div>
-                <div className="text-sm text-gray-500 flex items-center gap-1">
+                <div className="text-sm text-gray-600 flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
                   {formatDateRange()}
                   <ChevronUp
@@ -187,7 +187,7 @@ export function DesktopBookingWidget({
             <span className="px-2 py-1 bg-success text-white text-xs font-bold rounded">
               {discountPercent}% OFF
             </span>
-            <span className="text-gray-400 line-through">
+            <span className="text-gray-600 line-through">
               ${baseRate.toLocaleString()}/week
             </span>
           </div>
@@ -196,7 +196,7 @@ export function DesktopBookingWidget({
           <span className="text-4xl font-bold text-primary">
             ${displayPrice.toLocaleString()}
           </span>
-          <span className="text-gray-500 text-lg">/week</span>
+          <span className="text-gray-600 text-lg">/week</span>
         </div>
       </div>
 
@@ -207,7 +207,7 @@ export function DesktopBookingWidget({
       >
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <div className="text-xs text-gray-500 uppercase tracking-wide">Check-in</div>
+            <div className="text-xs text-gray-600 uppercase tracking-wide">Check-in</div>
             <div className="font-semibold text-primary">
               {selectedDates?.checkIn
                 ? selectedDates.checkIn.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
@@ -216,7 +216,7 @@ export function DesktopBookingWidget({
             </div>
           </div>
           <div className="border-l border-gray-200 pl-4">
-            <div className="text-xs text-gray-500 uppercase tracking-wide">Check-out</div>
+            <div className="text-xs text-gray-600 uppercase tracking-wide">Check-out</div>
             <div className="font-semibold text-primary">
               {selectedDates?.checkOut
                 ? selectedDates.checkOut.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
@@ -247,7 +247,7 @@ export function DesktopBookingWidget({
 
       {/* Trust badges */}
       <div className="mt-6 pt-6 border-t border-gray-100">
-        <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
+        <div className="flex items-center justify-center gap-4 text-sm text-gray-600">
           <span className="flex items-center gap-1">
             <svg className="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />

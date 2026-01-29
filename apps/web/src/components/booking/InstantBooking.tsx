@@ -71,12 +71,12 @@ export function InstantBooking({
           <span className="text-3xl font-bold text-gray-900">
             ${baseRate?.toLocaleString() || '---'}
           </span>
-          <span className="text-gray-500">/ night</span>
+          <span className="text-gray-600">/ night</span>
         </div>
         {nights > 0 && nights >= minNights && estimatedTotal ? (
-          <p className="text-gray-500 text-sm">Est. total: ${estimatedTotal.total.toLocaleString()}</p>
+          <p className="text-gray-600 text-sm">Est. total: ${estimatedTotal.total.toLocaleString()}</p>
         ) : (
-          <p className="text-gray-500 text-sm">Select dates for total</p>
+          <p className="text-gray-600 text-sm">Select dates for total</p>
         )}
       </div>
 
@@ -174,7 +174,7 @@ export function InstantBooking({
             <span>${estimatedTotal.total.toLocaleString()}</span>
           </div>
 
-          <p className="text-xs text-gray-500 italic">
+          <p className="text-xs text-gray-600 italic">
             Final pricing confirmed at checkout
           </p>
         </div>
@@ -195,7 +195,7 @@ export function InstantBooking({
         Reserve Now
       </button>
 
-      <p className="text-center text-xs text-gray-500 mt-3">
+      <p className="text-center text-xs text-gray-600 mt-3">
         You won't be charged yet
       </p>
     </div>

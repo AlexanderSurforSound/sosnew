@@ -227,7 +227,7 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                           ? 'bg-ocean-100 text-ocean-700'
                           : isCompleted
                           ? 'text-green-600 hover:bg-green-50 cursor-pointer'
-                          : 'text-gray-400'
+                          : 'text-gray-600'
                       }`}
                     >
                       {isCompleted ? (

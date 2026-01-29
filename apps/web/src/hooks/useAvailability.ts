@@ -69,20 +69,29 @@ function calculatePricing(
   const accommodationTotal = availableDates.reduce((sum, d) => sum + (d.rate || 0), 0);
   const baseRate = Math.round(accommodationTotal / nights);
 
-  // Home Service Fee (cleaning) - placeholder, should come from Track PMS
+  // Home Service Fee - placeholder, should come from Track PMS
   // Typically ranges from $200-$500 depending on property size
   const homeServiceFee = 350;
 
-  // Pet Fee - per week, per pet - placeholder
+  // Dog Fee - per week, per pet - placeholder
   // Current site charges $250/pet/week
   const petFee = pets && pets > 0 ? pets * weeks * 250 : 0;
 
-  // Damage Waiver / Stay Secure Deposit - placeholder
+  // Security Deposit - placeholder
   // Usually around $99-$199
-  const damageWaiver = 99;
+  const securityDeposit = 99;
 
   // Pool Heat - not automatically included, set to 0
   const poolHeat = 0;
+
+  // Early Check-in - not automatically included, set to 0
+  const earlyCheckin = 0;
+
+  // Protection Plan (VRPPP) - not automatically included, set to 0
+  const protectionPlan = 0;
+
+  // Advance Reservation Deposit - not automatically included, set to 0
+  const advanceDeposit = 0;
 
   // Travel Insurance - not automatically included, set to 0
   const travelInsurance = 0;
@@ -91,7 +100,7 @@ function calculatePricing(
   const convenienceFee = 0;
 
   // Subtotal before taxes
-  const subtotal = accommodationTotal + homeServiceFee + petFee + damageWaiver + poolHeat;
+  const subtotal = accommodationTotal + homeServiceFee + petFee + securityDeposit + poolHeat + earlyCheckin + protectionPlan;
 
   // Tax rate: NC Occupancy Tax (5.75%) + Dare County (3%) = ~8.75% on accommodation
   // Plus 6.75% on some fees
@@ -99,7 +108,7 @@ function calculatePricing(
   const feeTaxRate = 0.0675;
 
   const accommodationTax = Math.round(accommodationTotal * accommodationTaxRate);
-  const feeTax = Math.round((homeServiceFee + petFee + damageWaiver) * feeTaxRate);
+  const feeTax = Math.round((homeServiceFee + petFee + securityDeposit + poolHeat + earlyCheckin) * feeTaxRate);
   const taxes = accommodationTax + feeTax;
 
   const total = subtotal + taxes;
@@ -109,10 +118,14 @@ function calculatePricing(
     weeks,
     baseRate,
     accommodationTotal,
-    homeServiceFee,
+    // Fees in display order
     petFee: petFee > 0 ? petFee : undefined,
     poolHeat: poolHeat > 0 ? poolHeat : undefined,
-    damageWaiver,
+    earlyCheckin: earlyCheckin > 0 ? earlyCheckin : undefined,
+    protectionPlan: protectionPlan > 0 ? protectionPlan : undefined,
+    homeServiceFee,
+    securityDeposit,
+    advanceDeposit: advanceDeposit > 0 ? advanceDeposit : undefined,
     travelInsurance: travelInsurance > 0 ? travelInsurance : undefined,
     convenienceFee: convenienceFee > 0 ? convenienceFee : undefined,
     subtotal,
@@ -120,6 +133,7 @@ function calculatePricing(
     total,
     // Legacy fields for compatibility
     cleaningFee: homeServiceFee,
-    serviceFee: 0, // No separate service fee - it's included in accommodation
+    serviceFee: 0,
+    damageWaiver: securityDeposit, // Alias for backwards compatibility
   };
 }

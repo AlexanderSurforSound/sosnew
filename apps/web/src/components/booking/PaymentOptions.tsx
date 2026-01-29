@@ -176,7 +176,7 @@ export function PaymentOptions({
       {/* Payment Method Selection */}
       <div>
         <h2 className="text-xl font-semibold mb-2">Payment Method</h2>
-        <p className="text-gray-500 text-sm mb-4">Select how you'd like to pay</p>
+        <p className="text-gray-600 text-sm mb-4">Select how you'd like to pay</p>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <button
@@ -187,9 +187,9 @@ export function PaymentOptions({
                 : 'border-gray-200 hover:border-gray-300'
             }`}
           >
-            <CreditCard className={`w-5 h-5 mb-2 ${selectedMethod === 'credit' ? 'text-ocean-600' : 'text-gray-400'}`} />
+            <CreditCard className={`w-5 h-5 mb-2 ${selectedMethod === 'credit' ? 'text-ocean-600' : 'text-gray-600'}`} />
             <p className="font-medium text-sm">Credit Card</p>
-            <p className="text-xs text-gray-500">Visa, MC, Amex, Discover</p>
+            <p className="text-xs text-gray-600">Visa, MC, Amex, Discover</p>
           </button>
 
           <button
@@ -200,9 +200,9 @@ export function PaymentOptions({
                 : 'border-gray-200 hover:border-gray-300'
             }`}
           >
-            <CreditCard className={`w-5 h-5 mb-2 ${selectedMethod === 'debit' ? 'text-ocean-600' : 'text-gray-400'}`} />
+            <CreditCard className={`w-5 h-5 mb-2 ${selectedMethod === 'debit' ? 'text-ocean-600' : 'text-gray-600'}`} />
             <p className="font-medium text-sm">Debit Card</p>
-            <p className="text-xs text-gray-500">Bank debit card</p>
+            <p className="text-xs text-gray-600">Bank debit card</p>
           </button>
 
           {showMailOption && (
@@ -214,9 +214,9 @@ export function PaymentOptions({
                   : 'border-gray-200 hover:border-gray-300'
               }`}
             >
-              <Mail className={`w-5 h-5 mb-2 ${selectedMethod === 'mail' ? 'text-ocean-600' : 'text-gray-400'}`} />
+              <Mail className={`w-5 h-5 mb-2 ${selectedMethod === 'mail' ? 'text-ocean-600' : 'text-gray-600'}`} />
               <p className="font-medium text-sm">Mail Check</p>
-              <p className="text-xs text-gray-500">Pay by check</p>
+              <p className="text-xs text-gray-600">Pay by check</p>
             </button>
           )}
         </div>
@@ -225,7 +225,7 @@ export function PaymentOptions({
       {/* Payment Plan Selection */}
       <div>
         <h2 className="text-xl font-semibold mb-2">Payment Plan</h2>
-        <p className="text-gray-500 text-sm mb-4">Choose how many payments to split your total</p>
+        <p className="text-gray-600 text-sm mb-4">Choose how many payments to split your total</p>
 
         {/* Notice if close to check-in */}
         {daysUntilCheckIn < 30 && (
@@ -282,9 +282,9 @@ export function PaymentOptions({
                             </span>
                           )}
                         </div>
-                        <p className="text-sm text-gray-500 mt-0.5">{plan.description}</p>
+                        <p className="text-sm text-gray-600 mt-0.5">{plan.description}</p>
                         {!plan.available && plan.availableReason && (
-                          <p className="text-xs text-gray-400 mt-1">{plan.availableReason}</p>
+                          <p className="text-xs text-gray-600 mt-1">{plan.availableReason}</p>
                         )}
                       </div>
                       {plan.available && (
@@ -292,7 +292,7 @@ export function PaymentOptions({
                           <p className="font-bold text-lg text-gray-900">
                             ${firstPayment.amount.toLocaleString()}
                           </p>
-                          <p className="text-xs text-gray-500">due today</p>
+                          <p className="text-xs text-gray-600">due today</p>
                         </div>
                       )}
                     </div>
@@ -314,7 +314,7 @@ export function PaymentOptions({
                               <div className="flex items-center gap-3">
                                 <div
                                   className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                                    idx === 0 ? 'bg-ocean-100 text-ocean-600' : 'bg-gray-100 text-gray-500'
+                                    idx === 0 ? 'bg-ocean-100 text-ocean-600' : 'bg-gray-100 text-gray-600'
                                   }`}
                                 >
                                   {idx === 0 ? <CreditCard className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
@@ -322,7 +322,7 @@ export function PaymentOptions({
                                 <div>
                                   <p className="text-sm font-medium text-gray-900">{payment.label}</p>
                                   {payment.dueDate && idx > 0 && (
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-xs text-gray-600">
                                       {format(payment.dueDate, 'MMM d, yyyy')}
                                     </p>
                                   )}
@@ -344,7 +344,7 @@ export function PaymentOptions({
 
       {/* Convenience Fee Notice */}
       <div className="flex items-start gap-3 p-4 bg-gray-50 border border-gray-200 rounded-xl">
-        <Percent className="w-5 h-5 text-gray-500 flex-shrink-0 mt-0.5" />
+        <Percent className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
         <div className="text-sm">
           <p className="font-medium text-gray-700">Payment Processing Fee</p>
           <p className="text-gray-600 mt-1">
@@ -356,7 +356,7 @@ export function PaymentOptions({
       </div>
 
       {/* Security Note */}
-      <div className="flex items-center gap-2 text-sm text-gray-500">
+      <div className="flex items-center gap-2 text-sm text-gray-600">
         <Shield className="w-4 h-4" />
         <span>All payments are secure and encrypted</span>
       </div>

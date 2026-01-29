@@ -208,37 +208,37 @@ export default function BookingConfirmationPage() {
                 <div className="relative md:w-1/3 aspect-[4/3] md:aspect-auto">
                   <div className="absolute inset-0 bg-gradient-to-r from-ocean-500/20 to-transparent z-10" />
                   <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                    <Home className="w-12 h-12 text-gray-400" />
+                    <Home className="w-12 h-12 text-gray-600" />
                   </div>
                 </div>
                 <div className="p-6 flex-1">
                   <h2 className="text-xl font-bold text-gray-900 mb-1">
                     {reservation.property.name}
                   </h2>
-                  <p className="text-gray-500 flex items-center gap-1 mb-4">
+                  <p className="text-gray-600 flex items-center gap-1 mb-4">
                     <MapPin className="w-4 h-4" />
                     {reservation.property.village}, NC
                   </p>
 
                   <div className="grid grid-cols-3 gap-4 text-sm">
                     <div>
-                      <p className="text-gray-500">Check-in</p>
+                      <p className="text-gray-600">Check-in</p>
                       <p className="font-semibold">
                         {format(new Date(reservation.checkIn), 'EEE, MMM d')}
                       </p>
-                      <p className="text-gray-500 text-xs">After 4:00 PM</p>
+                      <p className="text-gray-600 text-xs">After 4:00 PM</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Check-out</p>
+                      <p className="text-gray-600">Check-out</p>
                       <p className="font-semibold">
                         {format(new Date(reservation.checkOut), 'EEE, MMM d')}
                       </p>
-                      <p className="text-gray-500 text-xs">Before 10:00 AM</p>
+                      <p className="text-gray-600 text-xs">Before 10:00 AM</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Duration</p>
+                      <p className="text-gray-600">Duration</p>
                       <p className="font-semibold">{nights} nights</p>
-                      <p className="text-gray-500 text-xs">
+                      <p className="text-gray-600 text-xs">
                         {totalGuests} guest{totalGuests !== 1 ? 's' : ''}
                         {reservation.guests.pets > 0 && `, ${reservation.guests.pets} pet`}
                       </p>
@@ -414,11 +414,11 @@ export default function BookingConfirmationPage() {
                 </Link>
                 <button className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
                   <span className="text-gray-700">Download Receipt</span>
-                  <Download className="w-5 h-5 text-gray-400" />
+                  <Download className="w-5 h-5 text-gray-600" />
                 </button>
                 <button className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
                   <span className="text-gray-700">Share Trip</span>
-                  <Share2 className="w-5 h-5 text-gray-400" />
+                  <Share2 className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
             </motion.div>
@@ -430,7 +430,7 @@ export default function BookingConfirmationPage() {
               transition={{ delay: 1 }}
               className="bg-gray-50 rounded-xl p-6 text-center"
             >
-              <p className="text-gray-500 text-sm mb-2">Questions about your booking?</p>
+              <p className="text-gray-600 text-sm mb-2">Questions about your booking?</p>
               <a
                 href="tel:800-237-1138"
                 className="flex items-center justify-center gap-2 text-ocean-600 font-medium"

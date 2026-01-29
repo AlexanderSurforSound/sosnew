@@ -88,7 +88,7 @@ export function BookingWidget({ property }: BookingWidgetProps) {
             Check-in
           </label>
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
             <input
               type="date"
               value={checkIn}
@@ -103,7 +103,7 @@ export function BookingWidget({ property }: BookingWidgetProps) {
             Check-out
           </label>
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
             <input
               type="date"
               value={checkOut}
@@ -126,13 +126,13 @@ export function BookingWidget({ property }: BookingWidgetProps) {
             onClick={() => setShowGuestDropdown(!showGuestDropdown)}
             className="input pl-10 pr-10 text-left w-full text-sm"
           >
-            <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
             {guests.adults + guests.children} guests
             {guests.pets > 0 && `, ${guests.pets} pet${guests.pets > 1 ? 's' : ''}`}
             {showGuestDropdown ? (
-              <ChevronUp className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <ChevronUp className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
             ) : (
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
             )}
           </button>
 
@@ -142,7 +142,7 @@ export function BookingWidget({ property }: BookingWidgetProps) {
               <div className="flex items-center justify-between py-2">
                 <div>
                   <span className="font-medium">Adults</span>
-                  <p className="text-sm text-gray-500">Age 13+</p>
+                  <p className="text-sm text-gray-600">Age 13+</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
@@ -169,7 +169,7 @@ export function BookingWidget({ property }: BookingWidgetProps) {
               <div className="flex items-center justify-between py-2 border-t">
                 <div>
                   <span className="font-medium">Children</span>
-                  <p className="text-sm text-gray-500">Ages 2-12</p>
+                  <p className="text-sm text-gray-600">Ages 2-12</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <button
@@ -197,7 +197,7 @@ export function BookingWidget({ property }: BookingWidgetProps) {
                 <div className="flex items-center justify-between py-2 border-t">
                   <div>
                     <span className="font-medium">Pets</span>
-                    <p className="text-sm text-gray-500">Bring your furry friend</p>
+                    <p className="text-sm text-gray-600">Bring your furry friend</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <button
@@ -229,7 +229,7 @@ export function BookingWidget({ property }: BookingWidgetProps) {
             </div>
           )}
         </div>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-600 mt-1">
           This property sleeps up to {property.sleeps} guests
         </p>
       </div>
@@ -294,12 +294,12 @@ export function BookingWidget({ property }: BookingWidgetProps) {
       </button>
 
       {/* Minimum nights notice */}
-      <p className="text-center text-xs text-gray-500 mt-2">
+      <p className="text-center text-xs text-gray-600 mt-2">
         {MIN_NIGHTS}-night minimum stay required
       </p>
 
       {/* Contact */}
-      <p className="text-center text-sm text-gray-500 mt-4">
+      <p className="text-center text-sm text-gray-600 mt-4">
         Questions?{' '}
         <a href="tel:800-237-1138" className="text-primary-600 hover:underline">
           Call us at 800.237.1138

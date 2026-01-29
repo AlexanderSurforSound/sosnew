@@ -107,19 +107,23 @@ export interface Pricing {
   weeks: number;
   baseRate: number;
   accommodationTotal: number;
-  // Fees from Track PMS
-  homeServiceFee: number; // Cleaning fee
-  petFee?: number; // Per week if pets
-  poolHeat?: number; // Per week if selected
-  travelInsurance?: number; // Optional insurance
-  damageWaiver?: number; // Stay Secure Deposit / VRPPP
-  convenienceFee?: number; // Credit card / debit / mail fee
+  // Fees from Track PMS (in display order)
+  petFee?: number; // Dog Fee - per week if pets
+  poolHeat?: number; // Pool Heat - per week if selected
+  earlyCheckin?: number; // Early Check-in by 1:00pm
+  protectionPlan?: number; // Protection Plan (VRPPP)
+  homeServiceFee: number; // Home Service Fee (cleaning)
+  securityDeposit?: number; // Security Deposit
+  advanceDeposit?: number; // Advance Reservation Deposit
+  travelInsurance?: number; // Travel Insurance (optional)
+  convenienceFee?: number; // Convenience Fee (CC/DC) or Check Processing Fee
   taxes: number;
   subtotal: number;
   total: number;
   // Legacy fields for compatibility
   cleaningFee: number;
   serviceFee: number;
+  damageWaiver?: number; // Alias for securityDeposit
 }
 
 // Reservation Types

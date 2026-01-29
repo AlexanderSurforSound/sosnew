@@ -84,7 +84,7 @@ export function DateSelection({
             Check-in Date
           </label>
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
             <input
               type="date"
               value={checkIn}
@@ -93,7 +93,7 @@ export function DateSelection({
               className="input pl-10"
             />
           </div>
-          <p className="text-sm text-gray-500 mt-1">Check-in after 4:00 PM</p>
+          <p className="text-sm text-gray-600 mt-1">Check-in after 4:00 PM</p>
         </div>
 
         <div>
@@ -101,7 +101,7 @@ export function DateSelection({
             Check-out Date
           </label>
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" />
             <input
               type="date"
               value={checkOut}
@@ -110,7 +110,7 @@ export function DateSelection({
               className="input pl-10"
             />
           </div>
-          <p className="text-sm text-gray-500 mt-1">Check-out before 10:00 AM</p>
+          <p className="text-sm text-gray-600 mt-1">Check-out before 10:00 AM</p>
         </div>
       </div>
 
@@ -175,7 +175,7 @@ export function DateSelection({
         {isLoading ? 'Checking availability...' : 'Continue to Guest Information'}
       </button>
 
-      <p className="text-center text-xs text-gray-500 mt-2">
+      <p className="text-center text-xs text-gray-600 mt-2">
         {MIN_NIGHTS}-night minimum stay required
       </p>
     </div>

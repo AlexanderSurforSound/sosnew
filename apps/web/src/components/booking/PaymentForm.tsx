@@ -101,7 +101,7 @@ export function PaymentForm({ amount, onBack, onSubmit, isLoading, error }: Paym
             ref={cardRef}
             className="p-4 border rounded-lg bg-white min-h-[50px] flex items-center gap-3"
           >
-            <CreditCard className="w-5 h-5 text-gray-400" />
+            <CreditCard className="w-5 h-5 text-gray-600" />
             <input
               type="text"
               placeholder="4242 4242 4242 4242"
@@ -121,7 +121,7 @@ export function PaymentForm({ amount, onBack, onSubmit, isLoading, error }: Paym
               maxLength={4}
             />
           </div>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             Test card: 4242 4242 4242 4242, any future date, any 3 digits
           </p>
         </div>
@@ -228,7 +228,7 @@ export function PaymentForm({ amount, onBack, onSubmit, isLoading, error }: Paym
           </button>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-4">
+        <p className="text-center text-sm text-gray-600 mt-4">
           By clicking Pay, you agree to our{' '}
           <a href="/terms" className="text-primary-600 hover:underline">Terms of Service</a>{' '}
           and{' '}

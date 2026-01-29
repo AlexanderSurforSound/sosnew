@@ -85,7 +85,7 @@ export function GuestInfo({ initialValues, onBack, onComplete, isLoggedIn }: Gue
           {errors.email && (
             <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
           )}
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             Confirmation and trip details will be sent to this email
           </p>
         </div>
@@ -101,14 +101,14 @@ export function GuestInfo({ initialValues, onBack, onComplete, isLoggedIn }: Gue
           {errors.phone && (
             <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
           )}
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             For important trip updates and check-in instructions
           </p>
         </div>
 
         <div className="border-t pt-6">
           <h3 className="font-medium mb-4">Home Address (Optional)</h3>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-gray-600 mb-4">
             Used for travel insurance or other optional services
           </p>
 

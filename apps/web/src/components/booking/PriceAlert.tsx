@@ -142,7 +142,7 @@ export default function PriceAlert({
                       <span className="font-semibold text-gray-900">${currentPrice}/night</span>
                     </div>
                     {checkIn && checkOut && (
-                      <p className="text-sm text-gray-500 mt-1">
+                      <p className="text-sm text-gray-600 mt-1">
                         {checkIn.toLocaleDateString()} - {checkOut.toLocaleDateString()}
                       </p>
                     )}
@@ -163,7 +163,7 @@ export default function PriceAlert({
                         max={currentPrice - 1}
                         className="text-3xl font-bold text-gray-900 w-28 border-b-2 border-gray-300 focus:border-ocean-500 outline-none bg-transparent"
                       />
-                      <span className="text-gray-500">/night</span>
+                      <span className="text-gray-600">/night</span>
                       {percentOff > 0 && (
                         <span className="ml-2 px-2 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
                           {percentOff}% off
@@ -205,7 +205,7 @@ export default function PriceAlert({
                             onChange={(e) => setNotifyEmail(e.target.checked)}
                             className="w-5 h-5 rounded border-gray-300 text-ocean-600 focus:ring-ocean-500"
                           />
-                          <Mail className="w-5 h-5 text-gray-400" />
+                          <Mail className="w-5 h-5 text-gray-600" />
                           <span className="text-gray-700">Email</span>
                         </label>
                         {notifyEmail && (
@@ -231,7 +231,7 @@ export default function PriceAlert({
                             onChange={(e) => setNotifySms(e.target.checked)}
                             className="w-5 h-5 rounded border-gray-300 text-ocean-600 focus:ring-ocean-500"
                           />
-                          <Smartphone className="w-5 h-5 text-gray-400" />
+                          <Smartphone className="w-5 h-5 text-gray-600" />
                           <span className="text-gray-700">Text message</span>
                         </label>
                         {notifySms && (
@@ -269,7 +269,7 @@ export default function PriceAlert({
                     )}
                   </button>
 
-                  <p className="text-xs text-gray-500 text-center">
+                  <p className="text-xs text-gray-600 text-center">
                     We'll only use your contact info to send price alerts. You can unsubscribe anytime.
                   </p>
                 </form>

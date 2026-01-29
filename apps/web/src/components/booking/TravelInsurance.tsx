@@ -95,7 +95,7 @@ export function TravelInsurance({ tripTotal, onInsuranceChange, selectedPlan }: 
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold mb-2">Protect Your Trip</h2>
-        <p className="text-gray-500">
+        <p className="text-gray-600">
           Travel insurance can help protect your vacation investment
         </p>
       </div>
@@ -126,7 +126,7 @@ export function TravelInsurance({ tripTotal, onInsuranceChange, selectedPlan }: 
               <Icon className="w-5 h-5 text-ocean-600 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-medium text-sm text-gray-900">{detail.title}</p>
-                <p className="text-xs text-gray-500">{detail.description}</p>
+                <p className="text-xs text-gray-600">{detail.description}</p>
               </div>
             </div>
           );
@@ -167,14 +167,14 @@ export function TravelInsurance({ tripTotal, onInsuranceChange, selectedPlan }: 
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900">{plan.name}</h4>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-gray-600 mt-1">
                       Up to ${plan.maxCoverage.toLocaleString()} in coverage
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-xl text-gray-900">${price}</p>
-                  <p className="text-xs text-gray-500">one-time</p>
+                  <p className="text-xs text-gray-600">one-time</p>
                 </div>
               </div>
 
@@ -213,7 +213,7 @@ export function TravelInsurance({ tripTotal, onInsuranceChange, selectedPlan }: 
             </div>
             <div>
               <h4 className="font-semibold text-gray-900">No thanks, I'll risk it</h4>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-600 mt-1">
                 I understand my booking is non-refundable without travel protection
               </p>
             </div>

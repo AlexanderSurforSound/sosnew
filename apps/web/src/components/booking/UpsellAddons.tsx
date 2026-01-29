@@ -52,11 +52,11 @@ const availableAddons: Addon[] = [
     category: 'convenience',
   },
   {
-    id: 'pet-fee',
-    name: 'Pet Fee',
+    id: 'dog-fee',
+    name: 'Dog Fee',
     description: 'Bring your furry friend along (pet-friendly properties only)',
-    price: 200, // Default - actual fee comes from Track PMS per property
-    priceType: 'flat',
+    price: 250, // Default - actual fee comes from Track PMS per property (per week)
+    priceType: 'per_night',
     icon: PawPrint,
     category: 'convenience',
   },
@@ -102,7 +102,7 @@ export function UpsellAddons({ nights, onAddonsChange, selectedAddons }: UpsellA
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold mb-2">Enhance Your Stay</h2>
-        <p className="text-gray-500">Add services and gear to make your vacation even better</p>
+        <p className="text-gray-600">Add services and gear to make your vacation even better</p>
       </div>
 
       {/* Popular Add-ons Banner */}
@@ -135,12 +135,12 @@ export function UpsellAddons({ nights, onAddonsChange, selectedAddons }: UpsellA
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-gray-900">{addon.name}</p>
-                    <p className="text-sm text-gray-500">{addon.description}</p>
+                    <p className="text-sm text-gray-600">{addon.description}</p>
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-gray-900">${calculateAddonPrice(addon)}</p>
                     {addon.priceType !== 'flat' && (
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-600">
                         ${addon.price}/{addon.priceType === 'per_day' ? 'day' : 'night'}
                       </p>
                     )}
@@ -174,7 +174,7 @@ export function UpsellAddons({ nights, onAddonsChange, selectedAddons }: UpsellA
               >
                 <div className="flex items-center gap-3">
                   <span className="font-medium">{category.label}</span>
-                  <span className="text-sm text-gray-500">{category.description}</span>
+                  <span className="text-sm text-gray-600">{category.description}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   {selectedInCategory > 0 && (
@@ -183,7 +183,7 @@ export function UpsellAddons({ nights, onAddonsChange, selectedAddons }: UpsellA
                     </span>
                   )}
                   <ChevronDown
-                    className={`w-5 h-5 text-gray-400 transition-transform ${
+                    className={`w-5 h-5 text-gray-600 transition-transform ${
                       expandedCategory === category.id ? 'rotate-180' : ''
                     }`}
                   />
@@ -226,12 +226,12 @@ export function UpsellAddons({ nights, onAddonsChange, selectedAddons }: UpsellA
                               <div className="flex items-start justify-between">
                                 <div>
                                   <h4 className="font-medium text-gray-900">{addon.name}</h4>
-                                  <p className="text-sm text-gray-500 mt-1">{addon.description}</p>
+                                  <p className="text-sm text-gray-600 mt-1">{addon.description}</p>
                                 </div>
                                 <div className="text-right">
                                   <p className="font-semibold text-gray-900">${totalPrice}</p>
                                   {addon.priceType !== 'flat' && (
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-xs text-gray-600">
                                       ${addon.price}/{addon.priceType === 'per_day' ? 'day' : 'night'}
                                     </p>
                                   )}
@@ -254,7 +254,7 @@ export function UpsellAddons({ nights, onAddonsChange, selectedAddons }: UpsellA
       {totalAddonsPrice > 0 && (
         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
           <div className="flex items-center gap-2">
-            <Info className="w-5 h-5 text-gray-400" />
+            <Info className="w-5 h-5 text-gray-600" />
             <span className="text-gray-600">
               {selectedAddons.length} add-on{selectedAddons.length !== 1 ? 's' : ''} selected
             </span>
@@ -265,7 +265,7 @@ export function UpsellAddons({ nights, onAddonsChange, selectedAddons }: UpsellA
 
       {/* No add-ons message */}
       {availableAddons.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-gray-600">
           <p>No add-ons available for this property.</p>
         </div>
       )}

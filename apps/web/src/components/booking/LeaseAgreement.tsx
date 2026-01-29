@@ -519,7 +519,7 @@ export function LeaseAgreement({
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold mb-2">Rental Agreement</h2>
-        <p className="text-gray-500">
+        <p className="text-gray-600">
           Please read and initial each section, then sign the rental agreement to complete your booking
         </p>
       </div>
@@ -527,27 +527,27 @@ export function LeaseAgreement({
       {/* Agreement Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="bg-gray-50 rounded-lg p-3">
-          <Home className="w-5 h-5 text-gray-400 mb-1" />
-          <p className="text-xs text-gray-500">Property</p>
+          <Home className="w-5 h-5 text-gray-600 mb-1" />
+          <p className="text-xs text-gray-600">Property</p>
           <p className="font-medium text-sm truncate">{propertyName}</p>
         </div>
         <div className="bg-gray-50 rounded-lg p-3">
-          <Calendar className="w-5 h-5 text-gray-400 mb-1" />
-          <p className="text-xs text-gray-500">Dates</p>
+          <Calendar className="w-5 h-5 text-gray-600 mb-1" />
+          <p className="text-xs text-gray-600">Dates</p>
           <p className="font-medium text-sm">
             {format(new Date(checkIn), 'MMM d')} - {format(new Date(checkOut), 'MMM d')}
           </p>
         </div>
         <div className="bg-gray-50 rounded-lg p-3">
-          <Users className="w-5 h-5 text-gray-400 mb-1" />
-          <p className="text-xs text-gray-500">Guests</p>
+          <Users className="w-5 h-5 text-gray-600 mb-1" />
+          <p className="text-xs text-gray-600">Guests</p>
           <p className="font-medium text-sm">
             {guests.adults + guests.children} {guests.pets > 0 && `+ ${guests.pets} pet`}
           </p>
         </div>
         <div className="bg-gray-50 rounded-lg p-3">
-          <DollarSign className="w-5 h-5 text-gray-400 mb-1" />
-          <p className="text-xs text-gray-500">Total</p>
+          <DollarSign className="w-5 h-5 text-gray-600 mb-1" />
+          <p className="text-xs text-gray-600">Total</p>
           <p className="font-medium text-sm">${totalAmount.toLocaleString()}</p>
         </div>
       </div>
@@ -556,27 +556,27 @@ export function LeaseAgreement({
       <div className="flex items-center gap-4 text-sm">
         <div className="flex items-center gap-2">
           <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-            hasReadAgreement ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
+            hasReadAgreement ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'
           }`}>
             {hasReadAgreement ? <Check className="w-3 h-3" /> : '1'}
           </div>
-          <span className={hasReadAgreement ? 'text-green-600' : 'text-gray-500'}>Read Agreement</span>
+          <span className={hasReadAgreement ? 'text-green-600' : 'text-gray-600'}>Read Agreement</span>
         </div>
         <div className="flex items-center gap-2">
           <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-            allSectionsInitialed ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
+            allSectionsInitialed ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'
           }`}>
             {allSectionsInitialed ? <Check className="w-3 h-3" /> : '2'}
           </div>
-          <span className={allSectionsInitialed ? 'text-green-600' : 'text-gray-500'}>Initial Sections</span>
+          <span className={allSectionsInitialed ? 'text-green-600' : 'text-gray-600'}>Initial Sections</span>
         </div>
         <div className="flex items-center gap-2">
           <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-            signature ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
+            signature ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'
           }`}>
             {signature ? <Check className="w-3 h-3" /> : '3'}
           </div>
-          <span className={signature ? 'text-green-600' : 'text-gray-500'}>Sign</span>
+          <span className={signature ? 'text-green-600' : 'text-gray-600'}>Sign</span>
         </div>
       </div>
 
@@ -596,7 +596,7 @@ export function LeaseAgreement({
         <div className="p-6 prose prose-sm max-w-none">
           <div className="text-center mb-6">
             <h1 className="text-xl font-bold">VACATION RENTAL AGREEMENT</h1>
-            <p className="text-gray-500">Surf or Sound Realty</p>
+            <p className="text-gray-600">Surf or Sound Realty</p>
             {cmsLease?.headerText && <p className="text-sm">{cmsLease.headerText}</p>}
           </div>
 
@@ -648,7 +648,7 @@ export function LeaseAgreement({
             </div>
           ))}
 
-          <div className="mt-8 pt-8 border-t text-center text-gray-500">
+          <div className="mt-8 pt-8 border-t text-center text-gray-600">
             <p>
               {cmsLease?.signatureText ||
                 'By signing below, Tenant acknowledges having read this Agreement and agrees to all terms and conditions contained herein.'}
@@ -724,7 +724,7 @@ export function LeaseAgreement({
         {signature ? (
           <div className="space-y-3">
             <div className="bg-white border rounded-lg p-4">
-              <p className="text-xs text-gray-500 mb-2">Your signature:</p>
+              <p className="text-xs text-gray-600 mb-2">Your signature:</p>
               <img src={signature} alt="Signature" className="max-h-20" />
             </div>
             <button
@@ -741,7 +741,7 @@ export function LeaseAgreement({
           <button
             onClick={() => setShowSignaturePad(true)}
             disabled={!hasReadAgreement || !allSectionsInitialed}
-            className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-ocean-500 hover:text-ocean-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-ocean-500 hover:text-ocean-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {!hasReadAgreement
               ? 'Read the full agreement first'
@@ -751,7 +751,7 @@ export function LeaseAgreement({
           </button>
         )}
 
-        <p className="text-xs text-gray-500 mt-3">
+        <p className="text-xs text-gray-600 mt-3">
           By signing, I agree that my electronic signature is the legal equivalent of my handwritten
           signature on this Agreement.
         </p>
@@ -772,7 +772,7 @@ export function LeaseAgreement({
       </div>
 
       {/* Print/Download */}
-      <div className="flex items-center justify-center gap-4 text-sm text-gray-500">
+      <div className="flex items-center justify-center gap-4 text-sm text-gray-600">
         <button
           onClick={handleDownloadPdf}
           disabled={isGeneratingPdf}
@@ -843,7 +843,7 @@ function AddendumItem({
           onClick={onExpand}
           className="flex items-center gap-3 text-left flex-1"
         >
-          <FileText className="w-5 h-5 text-gray-400" />
+          <FileText className="w-5 h-5 text-gray-600" />
           <span className="font-medium">{addendum.title}</span>
           {addendum.required && (
             <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full">
@@ -851,7 +851,7 @@ function AddendumItem({
             </span>
           )}
           <ChevronDown
-            className={`w-5 h-5 text-gray-400 transition-transform ${
+            className={`w-5 h-5 text-gray-600 transition-transform ${
               isExpanded ? 'rotate-180' : ''
             }`}
           />
@@ -985,7 +985,7 @@ function SignaturePadModal({
           </button>
         </div>
 
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-gray-600 mb-4">
           Please sign in the box below. Your signature represents:
           <br />
           <strong>{guestName}</strong>
@@ -1000,7 +1000,7 @@ function SignaturePadModal({
         </div>
 
         <div className="flex items-center justify-between mt-4">
-          <button onClick={handleClear} className="text-sm text-gray-500 hover:text-gray-700">
+          <button onClick={handleClear} className="text-sm text-gray-600 hover:text-gray-700">
             Clear
           </button>
           <div className="flex gap-3">
@@ -1013,7 +1013,7 @@ function SignaturePadModal({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 mt-4 text-xs text-gray-500">
+        <div className="flex items-center gap-2 mt-4 text-xs text-gray-600">
           <Shield className="w-4 h-4" />
           Your signature is encrypted and securely stored
         </div>
