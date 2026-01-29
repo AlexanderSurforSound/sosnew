@@ -62,9 +62,6 @@ export default async function PropertiesPage({
   const result = await api.getProperties(params);
   const { items: properties, total, totalPages } = result;
 
-  // Check if there's an AI search query
-  const aiSearchQuery = searchParams.aiSearch || searchParams.q;
-
   return (
     <PropertiesPageClient
       properties={properties}
@@ -73,7 +70,6 @@ export default async function PropertiesPage({
       currentPage={params.page}
       currentFilters={params}
       searchParams={searchParams as Record<string, string | undefined>}
-      aiSearchQuery={aiSearchQuery}
     />
   );
 }
