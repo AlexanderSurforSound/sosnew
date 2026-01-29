@@ -375,10 +375,17 @@ class ApiClient {
 
   // Chat / AI Concierge
   async sendChatMessage(request: ChatMessageRequest): Promise<ChatResponse> {
-    return this.fetch('/chat/message', {
+    // Use internal API route directly
+    const response = await fetch('/api/chat/message', {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request),
     });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.error || 'Chat message failed');
+    }
+    return response.json();
   }
 
   async getChatConversations(sessionId?: string): Promise<ConversationSummary[]> {
