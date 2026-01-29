@@ -3,14 +3,22 @@ import type { Property } from '@/types';
 interface PropertySchemaProps {
   property: Property;
   url: string;
+  reviewStats?: {
+    averageRating: number;
+    totalReviews: number;
+  };
 }
 
 /**
  * JSON-LD Schema for vacation rental properties
  * Implements LodgingBusiness schema for better SEO and AI discovery
  */
-export function PropertySchema({ property, url }: PropertySchemaProps) {
-  const schema = {
+export function PropertySchema({ property, url, reviewStats }: PropertySchemaProps) {
+  // Use provided review stats or reasonable defaults based on property data
+  const avgRating = reviewStats?.averageRating ?? property.rating ?? 4.8;
+  const reviewCount = reviewStats?.totalReviews ?? property.reviewCount ?? 0;
+
+  const schema: Record<string, any> = {
     '@context': 'https://schema.org',
     '@type': 'LodgingBusiness',
     '@id': url,
@@ -43,32 +51,39 @@ export function PropertySchema({ property, url }: PropertySchemaProps) {
     checkinTime: '16:00',
     checkoutTime: '10:00',
     petsAllowed: property.petFriendly || false,
-    starRating: {
+  };
+
+  // Only include ratings if we have reviews (avoids misleading SEO)
+  if (reviewCount > 0) {
+    schema.starRating = {
       '@type': 'Rating',
-      ratingValue: 4.9,
+      ratingValue: avgRating,
       bestRating: 5,
-    },
-    aggregateRating: {
+    };
+    schema.aggregateRating = {
       '@type': 'AggregateRating',
-      ratingValue: 4.9,
-      reviewCount: 50, // TODO: Get actual review count
-    },
-    // Custom properties for vacation rentals
-    numberOfBedrooms: property.bedrooms,
-    numberOfBathroomsTotal: property.bathrooms,
-    occupancy: {
-      '@type': 'QuantitativeValue',
-      maxValue: property.sleeps,
-      unitText: 'guests',
-    },
-    // Provider info
-    provider: {
-      '@type': 'Organization',
-      name: 'Surf or Sound Realty',
-      url: 'https://www.surforsound.com',
-      telephone: '+1-252-987-2121',
-      logo: 'https://www.surforsound.com/images/logo.png',
-    },
+      ratingValue: avgRating,
+      reviewCount: reviewCount,
+      bestRating: 5,
+      worstRating: 1,
+    };
+  }
+
+  // Custom properties for vacation rentals
+  schema.numberOfBedrooms = property.bedrooms;
+  schema.numberOfBathroomsTotal = property.bathrooms;
+  schema.occupancy = {
+    '@type': 'QuantitativeValue',
+    maxValue: property.sleeps,
+    unitText: 'guests',
+  };
+  // Provider info
+  schema.provider = {
+    '@type': 'Organization',
+    name: 'Surf or Sound Realty',
+    url: 'https://www.surforsound.com',
+    telephone: '+1-252-987-2121',
+    logo: 'https://www.surforsound.com/images/logo.png',
   };
 
   // Remove undefined values

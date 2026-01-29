@@ -14,10 +14,11 @@ import type {
   AnalyticsEvent,
 } from '@/types';
 import { REAL_PROPERTIES, REAL_FEATURED_PROPERTIES, getRealProperty, searchRealProperties } from './realProperties';
+import { cacheGet, cacheSet, CACHE_TTL } from './cache';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
-// Always use mock data (realProperties.ts) for now
-const USE_MOCK_DATA = true;
+// Toggle mock data via env. Default to false (use API) in production.
+const USE_MOCK_DATA = (process.env.NEXT_PUBLIC_USE_MOCK_DATA || '').toLowerCase() === 'true';
 
 class ApiError extends Error {
   constructor(
@@ -84,8 +85,19 @@ class ApiClient {
     if (USE_MOCK_DATA) {
       return this.getMockProperties(params);
     }
+
+    // Build cache key from params
+    const cacheKey = `properties:list:${JSON.stringify(params)}`;
+
+    // Try to get from cache first
+    const cached = await cacheGet<PagedResult<Property>>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     try {
       const query = new URLSearchParams();
+      if (params.q) query.set('q', params.q);
       if (params.village) query.set('village', params.village);
       if (params.minBedrooms) query.set('minBedrooms', params.minBedrooms.toString());
       if (params.maxBedrooms) query.set('maxBedrooms', params.maxBedrooms.toString());
@@ -99,7 +111,12 @@ class ApiClient {
       if (params.sortBy) query.set('sortBy', params.sortBy);
 
       const queryString = query.toString();
-      return this.fetch(`/properties${queryString ? `?${queryString}` : ''}`);
+      const result = await this.fetch<PagedResult<Property>>(`/properties${queryString ? `?${queryString}` : ''}`);
+
+      // Cache the result (5 min for search results)
+      await cacheSet(cacheKey, result, CACHE_TTL.SEARCH_RESULTS);
+
+      return result;
     } catch {
       // Fallback to mock data if API fails
       return this.getMockProperties(params);
@@ -112,6 +129,28 @@ class ApiClient {
       bedrooms: params.minBedrooms,
       petFriendly: params.petFriendly,
     });
+
+    // Fuzzy search by property name or number
+    if (params.q) {
+      const searchTerm = params.q.toLowerCase().trim();
+      items = items.filter(p => {
+        const propertyName = p.name.toLowerCase();
+        const unitCode = (p as any).unitCode?.toLowerCase() || '';
+        const shortName = (p as any).shortName?.toLowerCase() || '';
+
+        // Check if search term matches name, unit code, or short name
+        const nameMatch = propertyName.includes(searchTerm) ||
+                         searchTerm.split(' ').every(word => propertyName.includes(word));
+        const codeMatch = unitCode.includes(searchTerm) || unitCode === searchTerm;
+        const shortNameMatch = shortName.includes(searchTerm);
+
+        // Also check for number-only searches (e.g., "138" matching unit code)
+        const isNumberSearch = /^\d+$/.test(searchTerm);
+        const numberMatch = isNumberSearch && (unitCode.includes(searchTerm) || propertyName.includes(searchTerm));
+
+        return nameMatch || codeMatch || shortNameMatch || numberMatch;
+      });
+    }
 
     // Sort
     if (params.sortBy === 'price_asc') items.sort((a, b) => (a.baseRate || 0) - (b.baseRate || 0));
@@ -139,8 +178,21 @@ class ApiClient {
       if (prop) return prop as PropertyDetail;
       throw new ApiError(404, 'Property not found');
     }
+
+    // Check cache first
+    const cacheKey = `properties:detail:${slug}`;
+    const cached = await cacheGet<PropertyDetail>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     try {
-      return this.fetch(`/properties/${slug}`);
+      const result = await this.fetch<PropertyDetail>(`/properties/${slug}`);
+
+      // Cache for 1 hour
+      await cacheSet(cacheKey, result, CACHE_TTL.PROPERTY_LIST);
+
+      return result;
     } catch {
       const prop = getRealProperty(slug);
       if (prop) return prop as PropertyDetail;
@@ -168,15 +220,41 @@ class ApiClient {
       }
       return { propertyId: slug, dates };
     }
-    return this.fetch(`/properties/${slug}/availability?start=${start}&end=${end}`);
+
+    // Check cache first (short TTL for availability)
+    const cacheKey = `properties:availability:${slug}:${start}:${end}`;
+    const cached = await cacheGet<Availability>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const result = await this.fetch<Availability>(`/properties/${slug}/availability?start=${start}&end=${end}`);
+
+    // Cache for 2 minutes (availability changes frequently)
+    await cacheSet(cacheKey, result, CACHE_TTL.AVAILABILITY);
+
+    return result;
   }
 
   async getFeaturedProperties(): Promise<Property[]> {
     if (USE_MOCK_DATA) {
       return REAL_FEATURED_PROPERTIES;
     }
+
+    // Check cache first
+    const cacheKey = 'properties:featured';
+    const cached = await cacheGet<Property[]>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
     try {
-      return this.fetch('/properties/featured');
+      const result = await this.fetch<Property[]>('/properties/featured');
+
+      // Cache for 1 hour
+      await cacheSet(cacheKey, result, CACHE_TTL.PROPERTY_LIST);
+
+      return result;
     } catch {
       return REAL_FEATURED_PROPERTIES;
     }
@@ -333,6 +411,56 @@ class ApiClient {
     return this.fetch(`/trips/${reservationId}`);
   }
 
+  // Payment Processing (Track PMS via SlimCD)
+  async processPayment(request: PaymentProcessRequest): Promise<PaymentProcessResponse> {
+    // For mail check payments, no card processing needed
+    if (request.paymentMethod === 'mail') {
+      return {
+        success: true,
+        token: `mail_${Date.now()}_${Math.random().toString(36).substring(7)}`,
+        message: 'Mail check payment initiated',
+      };
+    }
+
+    // For card payments, call the payment API
+    try {
+      return await this.fetch<PaymentProcessResponse>('/api/payments/process', {
+        method: 'POST',
+        body: JSON.stringify({
+          propertyTrackId: request.propertyTrackId,
+          checkIn: request.checkIn,
+          checkOut: request.checkOut,
+          amount: request.amount,
+          paymentMethod: request.paymentMethod,
+          card: {
+            number: request.cardNumber,
+            expMonth: request.cardExpMonth,
+            expYear: request.cardExpYear,
+            cvv: request.cardCvv,
+          },
+          billing: {
+            firstName: request.firstName,
+            lastName: request.lastName,
+            address: request.address,
+            address2: request.address2,
+            city: request.city,
+            state: request.state,
+            zip: request.zip,
+            country: request.country,
+            phone: request.phone,
+            email: request.email,
+          },
+        }),
+      });
+    } catch (err) {
+      // Return error response for API errors
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : 'Payment processing failed',
+      };
+    }
+  }
+
   // Reviews
   async getPropertyReviews(propertyId: string, page = 1, pageSize = 10): Promise<ReviewList> {
     return this.fetch(`/reviews/property/${propertyId}?page=${page}&pageSize=${pageSize}`);
@@ -353,6 +481,40 @@ class ApiClient {
     const query = sessionId ? `?sessionId=${sessionId}` : '';
     return this.fetch(`/reviews/${reviewId}/helpful${query}`, { method: 'POST' });
   }
+}
+
+// Payment Processing types
+export interface PaymentProcessRequest {
+  propertyTrackId: string;
+  checkIn: string;
+  checkOut: string;
+  amount: number;
+  paymentMethod: 'credit' | 'debit' | 'mail';
+  // Card info (for credit/debit)
+  cardNumber?: string;
+  cardExpMonth?: string;
+  cardExpYear?: string;
+  cardCvv?: string;
+  // Billing info
+  firstName: string;
+  lastName: string;
+  address: string;
+  address2?: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  phone: string;
+  email?: string;
+}
+
+export interface PaymentProcessResponse {
+  success: boolean;
+  token?: string;
+  transactionId?: string;
+  authCode?: string;
+  message?: string;
+  error?: string;
 }
 
 // Chat types

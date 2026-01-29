@@ -95,7 +95,8 @@ const nextConfig = {
               "img-src 'self' data: blob: https: http:",
               "font-src 'self' https://fonts.gstatic.com",
               "frame-src 'self' https://www.google.com https://www.youtube.com",
-              "connect-src 'self' https://api.surforsound.com https://cdn.sanity.io https://www.google-analytics.com",
+              // Allow API calls to our domain and local sandbox during development
+              "connect-src 'self' https://api.surforsound.com https://cdn.sanity.io https://www.google-analytics.com http://localhost:5000",
               "media-src 'self' https:",
               "object-src 'none'",
               "base-uri 'self'",

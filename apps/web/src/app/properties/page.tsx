@@ -36,6 +36,7 @@ export default async function PropertiesPage({
   searchParams: SearchParams;
 }) {
   const params = {
+    q: searchParams.q, // Property name/number search
     village: searchParams.village,
     checkIn: searchParams.checkIn,
     checkOut: searchParams.checkOut,

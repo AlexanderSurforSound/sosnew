@@ -11,6 +11,7 @@ import { SkipLinks, KeyboardShortcuts } from '@/components/accessibility';
 import MobileNav from '@/components/layout/MobileNav';
 import { WebVitals } from '@/components/performance';
 import { Providers } from './providers';
+import { PageErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 const merriweather = Merriweather({
   subsets: ['latin'],
@@ -98,6 +99,21 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${merriweather.variable} ${nunitoSans.variable}`}>
       <head>
+        {/* Preconnect to external resources for faster loading */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://cdn.sanity.io" />
+        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+
+        {/* Preconnect to payment providers */}
+        <link rel="preconnect" href="https://pay.google.com" />
+        <link rel="preconnect" href="https://apple.com" />
+
+        {/* Preconnect to API */}
+        {process.env.NEXT_PUBLIC_API_URL && (
+          <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL.replace('/api/v1', '')} />
+        )}
+
         <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
@@ -108,7 +124,9 @@ export default function RootLayout({
           <WebVitals />
           <SkipLinks />
           <Header />
-          <main id="main-content" className="flex-1 pb-20 lg:pb-0">{children}</main>
+          <main id="main-content" className="flex-1 pb-20 lg:pb-0">
+            <PageErrorBoundary>{children}</PageErrorBoundary>
+          </main>
           <Footer className="hidden lg:block" />
           <MobileNav />
           <CompareBar />

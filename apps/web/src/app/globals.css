@@ -319,3 +319,8 @@
     top: 0;
   }
 }
+
+  /* Ensure links are distinguishable in prose */
+  .prose a { text-decoration: underline; }
+  .prose a:hover { text-decoration: none; }
+  .prose a:hover { text-decoration: none; }

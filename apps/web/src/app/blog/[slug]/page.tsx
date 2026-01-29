@@ -191,17 +191,15 @@ export default function BlogPostPage({ params }: Props) {
             <div className="bg-gray-50 rounded-xl p-5">
               <h3 className="font-semibold text-gray-900 mb-4">Share this article</h3>
               <div className="flex gap-2">
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 bg-[#1877F2] text-white rounded-lg hover:opacity-90 transition-opacity">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 bg-[#1877F2] text-white rounded-lg hover:opacity-90 transition-opacity" aria-label="Share on Facebook">
                   <Facebook className="w-4 h-4" />
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 bg-[#1DA1F2] text-white rounded-lg hover:opacity-90 transition-opacity">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 bg-[#1DA1F2] text-white rounded-lg hover:opacity-90 transition-opacity" aria-label="Share on Twitter">
                   <Twitter className="w-4 h-4" />
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
-                  <Share2 className="w-4 h-4" />
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors" aria-label="Copy link"><Share2 className="w-4 h-4" />
                 </button>
-                <button className="flex-1 flex items-center justify-center gap-2 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
-                  <Bookmark className="w-4 h-4" />
+                <button className="flex-1 flex items-center justify-center gap-2 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors" aria-label="Bookmark"><Bookmark className="w-4 h-4" />
                 </button>
               </div>
             </div>

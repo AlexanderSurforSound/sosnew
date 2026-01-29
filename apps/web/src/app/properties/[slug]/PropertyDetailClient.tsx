@@ -28,6 +28,7 @@ import { VirtualTour } from '@/components/property/VirtualTour';
 import { SimilarProperties } from '@/components/property/SimilarProperties';
 import { FloorPlanViewer } from '@/components/property/FloorPlanViewer';
 import { PropertyAskSandy, PropertyAskSandyInline } from '@/components/property/PropertyAskSandy';
+import { RealTimeViewers, PropertyUrgencyIndicator } from '@/components/property/RealTimeViewers';
 import { useCompare } from '@/contexts/CompareContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 
@@ -134,9 +135,12 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
                   <h1 className="text-3xl font-bold text-gray-900 mb-2">
                     {property.name}
                   </h1>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <MapPin className="w-4 h-4" />
-                    <span>{property.village?.name || 'Hatteras Island'}, NC</span>
+                  <div className="flex items-center gap-4 text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4" />
+                      <span>{property.village?.name || 'Hatteras Island'}, NC</span>
+                    </div>
+                    <RealTimeViewers propertyId={property.id} variant="inline" />
                   </div>
                 </div>
 
@@ -372,6 +376,7 @@ export default function PropertyDetailClient({ property }: PropertyDetailClientP
           {/* Right Column - Booking Widget & Weather */}
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
+              <PropertyUrgencyIndicator propertyId={property.id} />
               <BookingWidget property={property} />
               <PriceCalendar propertyId={property.id} baseRate={property.baseRate ?? 0} />
               <WeatherWidget village={property.village?.name || 'Hatteras Island'} />

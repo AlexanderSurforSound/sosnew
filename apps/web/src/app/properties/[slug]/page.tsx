@@ -3,6 +3,9 @@ import { Metadata } from 'next';
 import { api } from '@/lib/api';
 import PropertyDetailClient from './PropertyDetailClient';
 
+// Incremental Static Regeneration: rebuild property pages hourly
+export const revalidate = 3600;
+
 interface PageProps {
   params: { slug: string };
 }
@@ -39,4 +42,15 @@ export default async function PropertyDetailPage({ params }: PageProps) {
   }
 
   return <PropertyDetailClient property={property} />;
+}
+
+// Pre-generate static params for properties at build time
+// Uses a large page size to reduce API calls; fallback handled by ISR
+export async function generateStaticParams() {
+  try {
+    const result = await api.getProperties({ page: 1, pageSize: 1000 });
+    return result.items.map((p) => ({ slug: p.slug }));
+  } catch {
+    return [];
+  }
 }

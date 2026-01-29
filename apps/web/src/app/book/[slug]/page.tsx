@@ -21,12 +21,14 @@ import { useBookingStore } from '@/stores/bookingStore';
 import { useAuth } from '@/hooks/useAuth';
 import { DateSelection } from '@/components/booking/DateSelection';
 import { GuestInfo } from '@/components/booking/GuestInfo';
-import { PaymentForm } from '@/components/booking/PaymentForm';
+import { PaymentForm, PaymentData } from '@/components/booking/PaymentForm';
 import { BookingSummary } from '@/components/booking/BookingSummary';
 import { UpsellAddons, availableAddons } from '@/components/booking/UpsellAddons';
 import { TravelInsurance, InsurancePlan, insurancePlans } from '@/components/booking/TravelInsurance';
 import { PaymentOptions, PaymentPlanType, PaymentMethodType } from '@/components/booking/PaymentOptions';
 import { LeaseAgreement } from '@/components/booking/LeaseAgreement';
+import { ExpressCheckout } from '@/components/booking/WalletPaymentButton';
+import { WalletPaymentResult } from '@/lib/walletPayment';
 import { differenceInDays } from 'date-fns';
 import { FileText } from 'lucide-react';
 
@@ -133,13 +135,15 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
       .catch((err) => console.error('Failed to fetch lease:', err));
   }, []);
 
-  const handlePaymentSubmit = async (paymentToken: string) => {
+  // Handle wallet payment (Apple Pay / Google Pay)
+  const handleWalletPaymentSuccess = async (result: WalletPaymentResult) => {
     if (!property || !checkIn || !checkOut || !pricing) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
+      // Create reservation with wallet payment token
       const reservation = await api.createReservation({
         propertyId: property.trackId,
         checkIn: checkIn,
@@ -160,7 +164,86 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
           signedAt: agreementSignedAt || new Date().toISOString(),
         },
         payment: {
-          token: paymentToken,
+          token: result.token || '',
+          amount: getFirstPaymentAmount(grandTotal, paymentPlan),
+          type: paymentPlan === 'one' ? 'full' : 'deposit',
+          method: 'credit' as const, // Wallet payments use credit card networks
+          plan: paymentPlan,
+        },
+      });
+
+      router.push(`/account/trips/${reservation.id}?booked=true`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Booking failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleWalletPaymentError = (errorMsg: string) => {
+    if (errorMsg !== 'Payment cancelled') {
+      setError(errorMsg);
+    }
+  };
+
+  const handlePaymentSubmit = async (paymentData: PaymentData) => {
+    if (!property || !checkIn || !checkOut || !pricing) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Process payment through Track PMS / SlimCD
+      const paymentResponse = await api.processPayment({
+        propertyTrackId: property.trackId,
+        checkIn,
+        checkOut,
+        amount: getFirstPaymentAmount(grandTotal, paymentPlan),
+        paymentMethod: paymentData.paymentMethod,
+        // Card details (only for card payments)
+        cardNumber: paymentData.cardNumber,
+        cardExpMonth: paymentData.cardExpMonth,
+        cardExpYear: paymentData.cardExpYear,
+        cardCvv: paymentData.cardCvv,
+        // Billing info
+        firstName: paymentData.firstName,
+        lastName: paymentData.lastName,
+        address: paymentData.address,
+        address2: paymentData.address2,
+        city: paymentData.city,
+        state: paymentData.state,
+        zip: paymentData.zip,
+        country: paymentData.country,
+        phone: paymentData.phone,
+        email: paymentData.email || guestInfo.email,
+      });
+
+      if (!paymentResponse.success) {
+        throw new Error(paymentResponse.error || 'Payment failed');
+      }
+
+      // Create reservation with payment token
+      const reservation = await api.createReservation({
+        propertyId: property.trackId,
+        checkIn: checkIn,
+        checkOut: checkOut,
+        adults: guests.adults,
+        children: guests.children,
+        pets: guests.pets,
+        guest: guestInfo,
+        addons: selectedAddons,
+        insurance: selectedInsurance ? {
+          planId: selectedInsurance.id,
+          amount: insuranceTotal,
+        } : undefined,
+        agreement: {
+          signature: signature!,
+          sectionInitials,
+          agreedAddendums,
+          signedAt: agreementSignedAt || new Date().toISOString(),
+        },
+        payment: {
+          token: paymentResponse.token || '',
           amount: getFirstPaymentAmount(grandTotal, paymentPlan),
           type: paymentPlan === 'one' ? 'full' : 'deposit',
           method: paymentMethod,
@@ -368,6 +451,17 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
 
                 {step === 'payment' && pricing && checkIn && (
                   <div className="space-y-8">
+                    {/* Express Checkout with Apple Pay / Google Pay */}
+                    <ExpressCheckout
+                      amount={getFirstPaymentAmount(grandTotal, paymentPlan)}
+                      propertyName={property.name}
+                      checkIn={checkIn}
+                      checkOut={checkOut || undefined}
+                      onSuccess={handleWalletPaymentSuccess}
+                      onError={handleWalletPaymentError}
+                      disabled={isLoading || !signature}
+                    />
+
                     {/* Payment Options */}
                     <PaymentOptions
                       totalAmount={grandTotal}
@@ -385,6 +479,7 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                         onSubmit={handlePaymentSubmit}
                         isLoading={isLoading}
                         error={error}
+                        paymentMethod={paymentMethod}
                       />
                     </div>
                   </div>

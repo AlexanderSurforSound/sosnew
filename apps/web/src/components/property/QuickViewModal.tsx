@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -16,27 +16,55 @@ interface QuickViewModalProps {
 export default function QuickViewModal({ property, isOpen, onClose }: QuickViewModalProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previouslyFocused = useRef<HTMLElement | null>(null);
+
   // Reset image index when property changes
   useEffect(() => {
     setCurrentImageIndex(0);
   }, [property?.id]);
 
-  // Close on escape key
+    // Close on escape key + focus trap
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      const el = modalRef.current;
+      if (!el) return;
+      const focusables = el.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          (last as HTMLElement)?.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          (first as HTMLElement)?.focus();
+        }
+      }
+    };
 
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
+      document.addEventListener('keydown', handleKeyDown);
+      previouslyFocused.current = document.activeElement as HTMLElement;
+      setTimeout(() => modalRef.current?.focus(), 0);
       document.body.style.overflow = 'hidden';
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = '';
+      previouslyFocused.current?.focus?.();
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose]);;
 
   if (!property) return null;
 
@@ -62,7 +90,7 @@ export default function QuickViewModal({ property, isOpen, onClose }: QuickViewM
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-4xl md:w-full md:max-h-[90vh] bg-white rounded-2xl shadow-2xl z-50 overflow-hidden"
+            className="fixed inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-4xl md:w-full md:max-h-[90vh] bg-white rounded-2xl shadow-2xl z-50 overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="qv-title" tabIndex={-1} ref={modalRef}
           >
             <div className="flex flex-col md:flex-row h-full max-h-[90vh]">
               {/* Image Gallery */}
@@ -81,16 +109,14 @@ export default function QuickViewModal({ property, isOpen, onClose }: QuickViewM
                       <>
                         <button
                           onClick={() => setCurrentImageIndex((i) => (i === 0 ? images.length - 1 : i - 1))}
-                          className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full hover:bg-white transition-colors"
-                        >
+                          className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full hover:bg-white transition-colors" aria-label="Previous image">
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                           </svg>
                         </button>
                         <button
                           onClick={() => setCurrentImageIndex((i) => (i === images.length - 1 ? 0 : i + 1))}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full hover:bg-white transition-colors"
-                        >
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full hover:bg-white transition-colors" aria-label="Next image">
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
@@ -148,15 +174,14 @@ export default function QuickViewModal({ property, isOpen, onClose }: QuickViewM
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-900">{property.name}</h2>
+                      <h2 id="qv-title" className="text-2xl font-bold text-gray-900">{property.name}</h2>
                       <p className="text-gray-600 mt-1">
                         {property.village?.name || 'Hatteras Island'}
                       </p>
                     </div>
                     <button
                       onClick={onClose}
-                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                    >
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors" aria-label="Close">
                       <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>

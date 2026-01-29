@@ -31,6 +31,9 @@ export interface Property {
   // Computed/convenience fields
   primaryImage?: string;
   pricePerNight?: number;
+  // Review data (populated from reviews API)
+  rating?: number;
+  reviewCount?: number;
 }
 
 export interface PropertyDetail extends Property {
@@ -242,6 +245,7 @@ export interface PagedResult<T> {
 }
 
 export interface PropertyQueryParams {
+  q?: string; // Search by property name or number (fuzzy)
   village?: string;
   checkIn?: string;
   checkOut?: string;

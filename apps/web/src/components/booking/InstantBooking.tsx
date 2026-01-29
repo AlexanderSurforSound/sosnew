@@ -83,10 +83,11 @@ export function InstantBooking({
       {/* Date Selection */}
       <div className="grid grid-cols-2 gap-2 mb-4">
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">
+          <label htmlFor="ib-checkin" className="block text-xs font-medium text-gray-700 mb-1">
             CHECK-IN
           </label>
           <input
+            id="ib-checkin"
             type="date"
             value={checkIn}
             min={format(new Date(), 'yyyy-MM-dd')}
@@ -95,10 +96,11 @@ export function InstantBooking({
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">
+          <label htmlFor="ib-checkout" className="block text-xs font-medium text-gray-700 mb-1">
             CHECK-OUT
           </label>
           <input
+            id="ib-checkout"
             type="date"
             value={checkOut}
             min={checkIn ? format(addDays(new Date(checkIn), minNights), 'yyyy-MM-dd') : ''}
@@ -110,10 +112,11 @@ export function InstantBooking({
 
       {/* Guests */}
       <div className="mb-4">
-        <label className="block text-xs font-medium text-gray-700 mb-1">
+        <label htmlFor="ib-guests" className="block text-xs font-medium text-gray-700 mb-1">
           GUESTS
         </label>
         <select
+          id="ib-guests"
           value={guests}
           onChange={(e) => setGuests(parseInt(e.target.value))}
           className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
@@ -129,10 +132,11 @@ export function InstantBooking({
       {/* Promo Code */}
       {showPromo ? (
         <div className="mb-4">
-          <label className="block text-xs font-medium text-gray-700 mb-1">
+          <label htmlFor="ib-promo" className="block text-xs font-medium text-gray-700 mb-1">
             PROMO CODE
           </label>
           <input
+            id="ib-promo"
             type="text"
             value={promoCode}
             onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
@@ -190,7 +194,7 @@ export function InstantBooking({
       {/* Book Button */}
       <button
         disabled={nights < minNights}
-        className="w-full bg-secondary hover:bg-secondary/90 disabled:bg-gray-300 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+        className="w-full bg-secondary-700 hover:bg-secondary-800 disabled:bg-gray-300 text-white font-semibold py-3 px-6 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-secondary-700"
       >
         Reserve Now
       </button>

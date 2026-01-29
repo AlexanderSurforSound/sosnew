@@ -67,6 +67,28 @@ export interface LoyaltyUpdate {
   tierProgress?: number;
 }
 
+// Real-time availability types
+export interface AvailabilityUpdate {
+  propertyId: string;
+  propertySlug: string;
+  date: string;
+  isAvailable: boolean;
+  rate?: number;
+}
+
+export interface ViewerUpdate {
+  propertyId: string;
+  viewerCount: number;
+}
+
+export interface PriceLock {
+  propertyId: string;
+  dates: { start: string; end: string };
+  lockId: string;
+  expiresAt: string;
+  isLocked: boolean;
+}
+
 type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'reconnecting';
 
 type NotificationCallback = (notification: SignalRNotification) => void;
@@ -75,6 +97,9 @@ type ReservationUpdateCallback = (update: ReservationUpdate) => void;
 type AchievementCallback = (achievement: AchievementUnlock) => void;
 type LoyaltyCallback = (update: LoyaltyUpdate) => void;
 type ConnectionStateCallback = (state: ConnectionState) => void;
+type AvailabilityCallback = (update: AvailabilityUpdate) => void;
+type ViewerCallback = (update: ViewerUpdate) => void;
+type PriceLockCallback = (lock: PriceLock) => void;
 
 class SignalRClient {
   private connection: signalR.HubConnection | null = null;
@@ -90,6 +115,12 @@ class SignalRClient {
   private achievementCallbacks: Set<AchievementCallback> = new Set();
   private loyaltyCallbacks: Set<LoyaltyCallback> = new Set();
   private connectionStateCallbacks: Set<ConnectionStateCallback> = new Set();
+  private availabilityCallbacks: Set<AvailabilityCallback> = new Set();
+  private viewerCallbacks: Set<ViewerCallback> = new Set();
+  private priceLockCallbacks: Set<PriceLockCallback> = new Set();
+
+  // Properties being watched for real-time updates
+  private watchedProperties: Set<string> = new Set();
 
   setToken(token: string | null) {
     this.token = token;
@@ -196,6 +227,21 @@ class SignalRClient {
     this.connection.on('LoyaltyPointsEarned', (update: LoyaltyUpdate) => {
       this.loyaltyCallbacks.forEach(cb => cb(update));
     });
+
+    // Availability events
+    this.connection.on('AvailabilityChanged', (update: AvailabilityUpdate) => {
+      this.availabilityCallbacks.forEach(cb => cb(update));
+    });
+
+    // Viewer count events
+    this.connection.on('ViewerCountChanged', (update: ViewerUpdate) => {
+      this.viewerCallbacks.forEach(cb => cb(update));
+    });
+
+    // Price lock events
+    this.connection.on('PriceLockUpdated', (lock: PriceLock) => {
+      this.priceLockCallbacks.forEach(cb => cb(lock));
+    });
   }
 
   // Subscribe to notifications
@@ -234,6 +280,60 @@ class SignalRClient {
     // Immediately call with current state
     callback(this.connectionState);
     return () => this.connectionStateCallbacks.delete(callback);
+  }
+
+  // Subscribe to availability updates
+  onAvailabilityChange(callback: AvailabilityCallback): () => void {
+    this.availabilityCallbacks.add(callback);
+    return () => this.availabilityCallbacks.delete(callback);
+  }
+
+  // Subscribe to viewer count updates
+  onViewerCountChange(callback: ViewerCallback): () => void {
+    this.viewerCallbacks.add(callback);
+    return () => this.viewerCallbacks.delete(callback);
+  }
+
+  // Subscribe to price lock updates
+  onPriceLockChange(callback: PriceLockCallback): () => void {
+    this.priceLockCallbacks.add(callback);
+    return () => this.priceLockCallbacks.delete(callback);
+  }
+
+  // Watch a property for real-time availability updates
+  async watchProperty(propertyId: string): Promise<void> {
+    this.watchedProperties.add(propertyId);
+    if (this.connection?.state === signalR.HubConnectionState.Connected) {
+      await this.connection.invoke('WatchProperty', propertyId);
+    }
+  }
+
+  // Stop watching a property
+  async unwatchProperty(propertyId: string): Promise<void> {
+    this.watchedProperties.delete(propertyId);
+    if (this.connection?.state === signalR.HubConnectionState.Connected) {
+      await this.connection.invoke('UnwatchProperty', propertyId);
+    }
+  }
+
+  // Request a price lock during checkout
+  async requestPriceLock(propertyId: string, startDate: string, endDate: string): Promise<PriceLock | null> {
+    if (this.connection?.state === signalR.HubConnectionState.Connected) {
+      try {
+        return await this.connection.invoke('RequestPriceLock', propertyId, startDate, endDate);
+      } catch (err) {
+        console.error('Failed to request price lock:', err);
+        return null;
+      }
+    }
+    return null;
+  }
+
+  // Release a price lock
+  async releasePriceLock(lockId: string): Promise<void> {
+    if (this.connection?.state === signalR.HubConnectionState.Connected) {
+      await this.connection.invoke('ReleasePriceLock', lockId);
+    }
   }
 
   // Join a specific group (e.g., for a reservation)

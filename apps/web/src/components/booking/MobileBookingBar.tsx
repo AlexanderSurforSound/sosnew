@@ -87,17 +87,17 @@ export function MobileBookingBar({
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                className="bg-white border-t border-gray-200 shadow-lg overflow-hidden"
+                className="bg-white border-t border-gray-200 shadow-lg overflow-hidden" id="mbb-date-panel"
               >
                 <div className="p-4">
                   <button
                     onClick={onSelectDates}
-                    className="w-full flex items-center justify-between p-4 border-2 border-primary rounded-xl hover:bg-primary/5 transition-colors"
+                    className="w-full flex items-center justify-between p-4 border-2 border-primary rounded-xl hover:bg-primary/5 transition-colors" aria-controls="mbb-date-panel" aria-expanded={isExpanded}
                   >
                     <div className="flex items-center gap-3">
                       <Calendar className="w-5 h-5 text-primary" />
                       <div className="text-left">
-                        <div className="text-sm text-gray-600">Check-in → Check-out</div>
+                        <div className="text-sm text-gray-600">Check-in to Check-out</div>
                         <div className="font-semibold text-primary">{formatDateRange()}</div>
                       </div>
                     </div>
@@ -114,7 +114,7 @@ export function MobileBookingBar({
               {/* Price section */}
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="flex-1 text-left"
+                className="flex-1 text-left" aria-controls="mbb-date-panel" aria-expanded={isExpanded}
               >
                 <div className="flex items-baseline gap-2">
                   {hasDiscount && (
@@ -142,10 +142,9 @@ export function MobileBookingBar({
                 onClick={onBookNow}
                 disabled={!isAvailable}
                 className={`
-                  px-8 py-4 rounded-xl font-bold text-white shadow-lg
-                  transition-all duration-200
+                  px-8 py-4 rounded-xl font-bold text-white shadow-lg\n                  transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-secondary-700
                   ${isAvailable
-                    ? 'bg-secondary hover:bg-secondary/90 active:bg-secondary/80'
+                    ? 'bg-secondary-700 hover:bg-secondary-800 active:bg-secondary-900'
                     : 'bg-gray-300 cursor-not-allowed'
                   }
                 `}
@@ -234,10 +233,9 @@ export function DesktopBookingWidget({
         onClick={onBookNow}
         disabled={!isAvailable}
         className={`
-          w-full py-4 rounded-xl font-bold text-white text-lg shadow-lg
-          transition-all duration-200
+          w-full py-4 rounded-xl font-bold text-white text-lg shadow-lg\n                  transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-secondary-700
           ${isAvailable
-            ? 'bg-secondary hover:bg-secondary/90'
+            ? 'bg-secondary-700 hover:bg-secondary-800 active:bg-secondary-900'
             : 'bg-gray-300 cursor-not-allowed'
           }
         `}

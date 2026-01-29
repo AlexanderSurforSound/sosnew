@@ -1,3 +1,4 @@
+
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -5,9 +6,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { X, GitCompare, ChevronRight } from 'lucide-react';
 import { useCompare } from '@/contexts/CompareContext';
+import React, { useEffect, useState } from 'react';
 
 export function CompareBar() {
   const { compareList, removeFromCompare, clearCompare, maxItems } = useCompare();
+  const [liveMessage, setLiveMessage] = useState('');
+
+  useEffect(() => {
+    setLiveMessage(`Compare list updated: ${compareList.length} item${compareList.length === 1 ? '' : 's'}`);
+  }, [compareList.length]);
 
   if (compareList.length === 0) return null;
 
@@ -17,8 +24,9 @@ export function CompareBar() {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
-        className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t shadow-lg"
+        className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t shadow-lg" role="region" aria-label="Compare bar"
       >
+        <div className="sr-only" role="status" aria-live="polite">{liveMessage}</div>
         <div className="container-page py-4">
           <div className="flex items-center justify-between gap-4">
             {/* Compare Items */}
@@ -57,7 +65,7 @@ export function CompareBar() {
                       </div>
                       <button
                         onClick={() => removeFromCompare(property.id)}
-                        className="absolute -top-1 -right-1 w-5 h-5 bg-gray-800 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                        className="absolute -top-1 -right-1 w-5 h-5 bg-gray-800 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600" aria-label={"Remove " + property.name + " from compare"}
                       >
                         <X className="w-3 h-3" />
                       </button>

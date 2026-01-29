@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Filter, X, MapPin, Bed, PawPrint, Grid, Map as MapIcon, Home } from 'lucide-react';
+import { Filter, X, MapPin, Bed, PawPrint, Grid, Map as MapIcon, Home, Search } from 'lucide-react';
 import { PropertyGrid } from '@/components/property/PropertyGrid';
 import { AdvancedFilters, MobileFiltersModal } from '@/components/search/AdvancedFilters';
 import { PropertySearchBar } from '@/components/search/PropertySearchBar';
@@ -49,6 +49,7 @@ export function PropertiesPageClient({
 
   // Active filter count for mobile indicator
   const activeFilterCount = [
+    currentFilters.q,
     currentFilters.village,
     currentFilters.minBedrooms,
     currentFilters.maxBedrooms,
@@ -58,6 +59,9 @@ export function PropertiesPageClient({
 
   // Active filter pills
   const activeFilters: { key: string; label: string; value: string }[] = [];
+  if (currentFilters.q) {
+    activeFilters.push({ key: 'q', label: 'Search', value: `"${currentFilters.q}"` });
+  }
   if (currentFilters.village) {
     activeFilters.push({ key: 'village', label: 'Village', value: currentFilters.village });
   }
@@ -102,6 +106,7 @@ export function PropertiesPageClient({
             variant="hero"
             className="max-w-5xl mx-auto"
             initialValues={{
+              q: currentFilters.q,
               village: currentFilters.village,
               checkIn: currentFilters.checkIn,
               checkOut: currentFilters.checkOut,
@@ -205,6 +210,7 @@ export function PropertiesPageClient({
                     key={filter.key}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-ocean-50 text-ocean-700 text-sm rounded-full capitalize"
                   >
+                    {filter.key === 'q' && <Search className="w-3 h-3" />}
                     {filter.key.includes('village') && <MapPin className="w-3 h-3" />}
                     {filter.key.includes('Bed') && <Bed className="w-3 h-3" />}
                     {filter.key.includes('Pet') && <PawPrint className="w-3 h-3" />}

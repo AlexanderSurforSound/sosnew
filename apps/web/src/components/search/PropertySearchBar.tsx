@@ -22,6 +22,7 @@ interface PropertySearchBarProps {
   variant?: 'hero' | 'compact' | 'inline';
   className?: string;
   initialValues?: {
+    q?: string;
     village?: string;
     checkIn?: string;
     checkOut?: string;
@@ -53,6 +54,7 @@ export function PropertySearchBar({
   initialValues,
 }: PropertySearchBarProps) {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState(initialValues?.q || '');
   const [village, setVillage] = useState(initialValues?.village || '');
   const [checkIn, setCheckIn] = useState(initialValues?.checkIn || '');
   const [checkOut, setCheckOut] = useState(initialValues?.checkOut || '');
@@ -63,6 +65,7 @@ export function PropertySearchBar({
   const handleSearch = () => {
     const params = new URLSearchParams();
 
+    if (searchQuery) params.set('q', searchQuery);
     if (village) params.set('village', village);
     if (checkIn) params.set('checkIn', checkIn);
     if (checkOut) params.set('checkOut', checkOut);
@@ -112,8 +115,50 @@ export function PropertySearchBar({
   if (variant === 'hero') {
     return (
       <div className={`${className}`}>
+        {/* Property Name/Number Search */}
+        {searchQuery && (
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 mb-3">
+            <div className="flex items-center gap-2 text-white/80 text-sm">
+              <Search className="w-4 h-4" />
+              <span>Searching for: &quot;{searchQuery}&quot;</span>
+              <button
+                onClick={() => setSearchQuery('')}
+                className="ml-auto p-1 hover:bg-white/20 rounded"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Main Search Bar */}
         <div className="bg-white rounded-2xl shadow-2xl p-2 md:p-3">
+          {/* Property Search Input */}
+          <div className="mb-2 md:mb-3">
+            <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+              <Home className="w-5 h-5 text-ocean-600 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <label className="block text-xs font-medium text-gray-500 mb-0.5">Property Name or Number</label>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="e.g., Sea Breeze, 138, Salvocean..."
+                  className="w-full bg-transparent text-gray-900 font-medium text-sm focus:outline-none placeholder:text-gray-400"
+                />
+              </div>
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="p-1 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-3">
             {/* Village Select */}
             <div className="md:col-span-3 relative">
