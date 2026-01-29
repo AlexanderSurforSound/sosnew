@@ -48,6 +48,31 @@
     @apply bg-gray-900 text-white;
   }
 
+  /* Ensure form inputs always have readable text */
+  input,
+  select,
+  textarea {
+    color: rgb(17 24 39); /* gray-900 */
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: rgb(107 114 128); /* gray-500 */
+  }
+
+  /* Date and time inputs */
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"] {
+    color: rgb(17 24 39);
+    background-color: white;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0);
+  }
+
   * {
     @apply border-gray-200;
   }
@@ -126,7 +151,7 @@
   }
 
   .input {
-    @apply flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50;
+    @apply flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .label {

@@ -396,10 +396,17 @@ class ApiClient {
 
   // Dream Matcher
   async dreamMatch(request: DreamMatcherRequest): Promise<DreamMatcherResponse> {
-    return this.fetch('/properties/dream-match', {
+    // Use internal API route directly (not through API_BASE)
+    const response = await fetch('/api/properties/dream-match', {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request),
     });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.error || 'Dream Matcher search failed');
+    }
+    return response.json();
   }
 
   // Trip Dashboard
