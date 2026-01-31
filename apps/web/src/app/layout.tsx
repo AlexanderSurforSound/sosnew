@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { ChatWidget } from '@/components/chat/ChatWidget';
+import { ChatWidgetV2 } from '@/components/chat/ChatWidgetV2';
 import { CompareBar } from '@/components/compare/CompareBar';
 import { ToastContainer } from '@/components/notifications';
 import { SkipLinks, KeyboardShortcuts } from '@/components/accessibility';
@@ -130,7 +130,7 @@ export default function RootLayout({
           <Footer className="hidden lg:block" />
           <MobileNav />
           <CompareBar />
-          <ChatWidget />
+          <ChatWidgetV2 />
           <ToastContainer />
           <KeyboardShortcuts />
         </Providers>

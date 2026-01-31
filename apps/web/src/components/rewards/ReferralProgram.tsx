@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Gift,
@@ -26,70 +26,52 @@ interface Referral {
   name: string;
   email: string;
   status: 'pending' | 'signed_up' | 'booked' | 'completed';
-  dateReferred: Date;
+  dateReferred: string;
   rewardAmount?: number;
 }
 
 interface ReferralProgramProps {
-  referralCode?: string;
-  referralLink?: string;
-  rewardAmount?: number;
-  friendReward?: number;
-  totalEarned?: number;
-  referrals?: Referral[];
+  userId?: string;
 }
 
-export default function ReferralProgram({
-  referralCode = 'BEACH2024',
-  referralLink = 'https://surfororsound.com/ref/BEACH2024',
-  rewardAmount = 75,
-  friendReward = 50,
-  totalEarned = 225,
-  referrals = [
-    {
-      id: '1',
-      name: 'Sarah Johnson',
-      email: 'sarah@email.com',
-      status: 'completed',
-      dateReferred: new Date(Date.now() - 86400000 * 30),
-      rewardAmount: 75,
-    },
-    {
-      id: '2',
-      name: 'Mike Chen',
-      email: 'mike@email.com',
-      status: 'completed',
-      dateReferred: new Date(Date.now() - 86400000 * 20),
-      rewardAmount: 75,
-    },
-    {
-      id: '3',
-      name: 'Emily Davis',
-      email: 'emily@email.com',
-      status: 'completed',
-      dateReferred: new Date(Date.now() - 86400000 * 10),
-      rewardAmount: 75,
-    },
-    {
-      id: '4',
-      name: 'Alex Wilson',
-      email: 'alex@email.com',
-      status: 'booked',
-      dateReferred: new Date(Date.now() - 86400000 * 5),
-    },
-    {
-      id: '5',
-      name: 'Jessica Brown',
-      email: 'jessica@email.com',
-      status: 'signed_up',
-      dateReferred: new Date(Date.now() - 86400000 * 2),
-    },
-  ],
-}: ReferralProgramProps) {
+export default function ReferralProgram({ userId }: ReferralProgramProps) {
+  const [referralCode, setReferralCode] = useState('BEACH2024');
+  const [referralLink, setReferralLink] = useState('https://surforsound.com/ref/BEACH2024');
+  const [rewardAmount, setRewardAmount] = useState(75);
+  const [friendReward, setFriendReward] = useState(50);
+  const [totalEarned, setTotalEarned] = useState(0);
+  const [referrals, setReferrals] = useState<Referral[]>([]);
+  const [loading, setLoading] = useState(true);
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [showInviteForm, setShowInviteForm] = useState(false);
   const [inviteEmails, setInviteEmails] = useState('');
+  const [sendingInvites, setSendingInvites] = useState(false);
+
+  useEffect(() => {
+    fetchReferralData();
+  }, [userId]);
+
+  const fetchReferralData = async () => {
+    try {
+      const params = userId ? `?userId=${userId}` : '';
+      const response = await fetch(`/api/referrals${params}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setReferralCode(data.referralCode);
+        setReferralLink(data.referralLink);
+        setRewardAmount(data.rewardAmount);
+        setFriendReward(data.friendReward);
+        setTotalEarned(data.totalEarned);
+        setReferrals(data.referrals || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch referral data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const copyCode = () => {
     navigator.clipboard.writeText(referralCode);
@@ -103,10 +85,34 @@ export default function ReferralProgram({
     setTimeout(() => setCopiedLink(false), 2000);
   };
 
-  const sendInvites = () => {
-    // Handle sending invites
-    setShowInviteForm(false);
-    setInviteEmails('');
+  const sendInvites = async () => {
+    if (!inviteEmails.trim()) return;
+
+    setSendingInvites(true);
+    try {
+      const emails = inviteEmails.split(',').map((e) => e.trim()).filter(Boolean);
+      const response = await fetch('/api/referrals/invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          emails,
+          referralCode,
+          senderName: 'User', // Would come from user session
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setShowInviteForm(false);
+        setInviteEmails('');
+        // Could show success toast here
+      }
+    } catch (error) {
+      console.error('Failed to send invites:', error);
+    } finally {
+      setSendingInvites(false);
+    }
   };
 
   const getStatusColor = (status: Referral['status']) => {
@@ -138,6 +144,28 @@ export default function ReferralProgram({
   const pendingRewards = referrals.filter(
     (r) => r.status === 'booked' || r.status === 'signed_up'
   ).length * rewardAmount;
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden animate-pulse">
+        <div className="p-6 bg-gradient-to-r from-violet-500 to-purple-600">
+          <div className="h-12 bg-white/20 rounded-xl mb-4 w-1/2" />
+          <div className="grid grid-cols-3 gap-4">
+            <div className="h-20 bg-white/20 rounded-xl" />
+            <div className="h-20 bg-white/20 rounded-xl" />
+            <div className="h-20 bg-white/20 rounded-xl" />
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4" />
+          <div className="space-y-3">
+            <div className="h-16 bg-gray-100 rounded-xl" />
+            <div className="h-16 bg-gray-100 rounded-xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
@@ -324,7 +352,7 @@ export default function ReferralProgram({
                   <div>
                     <p className="font-medium text-gray-900">{referral.name}</p>
                     <p className="text-sm text-gray-500">
-                      {referral.dateReferred.toLocaleDateString()}
+                      {new Date(referral.dateReferred).toLocaleDateString()}
                     </p>
                   </div>
                 </div>

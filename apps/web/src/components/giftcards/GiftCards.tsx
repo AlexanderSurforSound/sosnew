@@ -93,26 +93,47 @@ export default function GiftCardPurchase({ onPurchase }: GiftCardPurchaseProps) 
   const handlePurchase = async () => {
     setIsProcessing(true);
 
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Generate gift card code
-    const code = `SOS-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-    setGiftCardCode(code);
-
-    setPurchaseComplete(true);
-    setIsProcessing(false);
-
-    if (onPurchase) {
-      onPurchase({
-        amount,
-        design: selectedDesign,
-        recipientName,
-        recipientEmail,
-        senderName,
-        message,
-        deliveryDate: deliveryOption === 'scheduled' ? new Date(deliveryDate) : undefined,
+    try {
+      // Call the gift card API
+      const response = await fetch('/api/giftcards', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount,
+          design: selectedDesign.id,
+          recipientName,
+          recipientEmail,
+          senderName,
+          message,
+          deliveryDate: deliveryOption === 'scheduled' ? deliveryDate : undefined,
+        }),
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create gift card');
+      }
+
+      setGiftCardCode(data.giftCard.code);
+      setPurchaseComplete(true);
+
+      if (onPurchase) {
+        onPurchase({
+          amount,
+          design: selectedDesign,
+          recipientName,
+          recipientEmail,
+          senderName,
+          message,
+          deliveryDate: deliveryOption === 'scheduled' ? new Date(deliveryDate) : undefined,
+        });
+      }
+    } catch (error) {
+      console.error('Gift card purchase error:', error);
+      // Could show error to user here
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -597,18 +618,23 @@ export function GiftCardBalance() {
   const checkBalance = async () => {
     setIsChecking(true);
     setError('');
+    setBalance(null);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const response = await fetch(`/api/giftcards/${encodeURIComponent(code)}`);
+      const data = await response.json();
 
-    // Demo: random balance or error
-    if (code.startsWith('SOS-')) {
-      setBalance(Math.floor(Math.random() * 400) + 50);
-    } else {
-      setError('Invalid gift card code. Please check and try again.');
+      if (!response.ok || !data.valid) {
+        setError('Invalid gift card code. Please check and try again.');
+        return;
+      }
+
+      setBalance(data.balance);
+    } catch (err) {
+      setError('Unable to check balance. Please try again.');
+    } finally {
+      setIsChecking(false);
     }
-
-    setIsChecking(false);
   };
 
   return (

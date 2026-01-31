@@ -1,13 +1,45 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
-import { Lock, ArrowRight, Phone, Mail, Home } from 'lucide-react';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Owner Portal Login',
-  description: 'Access your Surf or Sound property owner dashboard to view bookings, statements, and manage your vacation rental.',
-};
+import { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Lock, ArrowRight, Phone, Mail, Home, AlertCircle } from 'lucide-react';
 
 export default function OwnerPortalPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/owner/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, rememberMe }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      // Redirect to dashboard
+      router.push(data.redirectTo || '/owner-portal/dashboard');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -22,7 +54,23 @@ export default function OwnerPortalPage() {
 
         {/* Login Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          <form className="space-y-5">
+          {/* Demo credentials notice */}
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+            <p className="text-sm text-amber-800">
+              <strong>Demo credentials:</strong><br />
+              Email: owner@example.com<br />
+              Password: demo123
+            </p>
+          </div>
+
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
                 Email Address
@@ -33,6 +81,8 @@ export default function OwnerPortalPage() {
                 name="email"
                 autoComplete="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                 placeholder="you@example.com"
               />
@@ -48,6 +98,8 @@ export default function OwnerPortalPage() {
                 name="password"
                 autoComplete="current-password"
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                 placeholder="Enter your password"
               />
@@ -57,6 +109,8 @@ export default function OwnerPortalPage() {
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                   className="w-4 h-4 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500"
                 />
                 <span className="text-sm text-gray-600">Remember me</span>
@@ -68,10 +122,20 @@ export default function OwnerPortalPage() {
 
             <button
               type="submit"
-              className="w-full py-3 px-4 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+              disabled={isLoading}
+              className="w-full py-3 px-4 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              <Lock className="w-4 h-4" />
-              Sign In to Portal
+              {isLoading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  <Lock className="w-4 h-4" />
+                  Sign In to Portal
+                </>
+              )}
             </button>
           </form>
 

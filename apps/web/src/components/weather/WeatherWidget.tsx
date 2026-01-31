@@ -61,40 +61,83 @@ const weatherIcons: Record<string, React.ReactNode> = {
   ),
 };
 
-// Simulated weather data for Hatteras Island
-const generateWeatherData = (village?: string): WeatherData => {
-  const conditions = ['sunny', 'partly-cloudy', 'cloudy', 'rainy'];
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const today = new Date();
+// Map API icons to our icon names
+const mapIcon = (icon: string): string => {
+  const iconMap: Record<string, string> = {
+    'sun': 'sunny',
+    'cloud-sun': 'partly-cloudy',
+    'cloud': 'cloudy',
+    'cloud-rain': 'rainy',
+    'cloud-lightning': 'stormy',
+    'cloud-fog': 'cloudy',
+    'wind': 'partly-cloudy',
+    'snowflake': 'cloudy',
+  };
+  return iconMap[icon] || 'partly-cloudy';
+};
 
-  const forecast = Array.from({ length: 5 }, (_, i) => {
-    const date = new Date(today);
-    date.setDate(date.getDate() + i);
-    const condition = conditions[Math.floor(Math.random() * conditions.length)];
+// Fetch real weather data from our API
+const fetchWeatherData = async (): Promise<WeatherData> => {
+  try {
+    const response = await fetch('/api/weather');
+    if (!response.ok) throw new Error('Weather fetch failed');
+    const data = await response.json();
+
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     return {
-      date: date.toISOString().split('T')[0],
-      dayOfWeek: dayNames[date.getDay()],
-      high: Math.floor(70 + Math.random() * 20),
-      low: Math.floor(55 + Math.random() * 15),
-      condition,
-      icon: condition,
-      precipChance: condition === 'rainy' ? Math.floor(60 + Math.random() * 40) : Math.floor(Math.random() * 30),
+      current: {
+        temp: Math.round(data.current?.temp || 70),
+        feelsLike: Math.round(data.current?.feelsLike || 70),
+        condition: data.current?.condition || 'Partly Cloudy',
+        icon: mapIcon(data.current?.icon || 'cloud-sun'),
+        humidity: data.current?.humidity || 50,
+        windSpeed: data.current?.windSpeed || 10,
+        uvIndex: data.current?.uvIndex || 5,
+      },
+      forecast: (data.forecast || []).slice(0, 5).map((day: any) => {
+        const date = new Date(day.date);
+        return {
+          date: day.date,
+          dayOfWeek: dayNames[date.getDay()],
+          high: Math.round(day.high || 75),
+          low: Math.round(day.low || 60),
+          condition: day.condition || 'Partly Cloudy',
+          icon: mapIcon(day.icon || 'cloud-sun'),
+          precipChance: day.precipitation || 0,
+        };
+      }),
     };
-  });
-
-  return {
-    current: {
-      temp: Math.floor(72 + Math.random() * 15),
-      feelsLike: Math.floor(75 + Math.random() * 10),
-      condition: 'Partly Cloudy',
-      icon: 'partly-cloudy',
-      humidity: Math.floor(60 + Math.random() * 25),
-      windSpeed: Math.floor(8 + Math.random() * 15),
-      uvIndex: Math.floor(4 + Math.random() * 6),
-    },
-    forecast,
-  };
+  } catch (error) {
+    console.error('Failed to fetch weather:', error);
+    // Return fallback data if API fails
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const today = new Date();
+    return {
+      current: {
+        temp: 70,
+        feelsLike: 72,
+        condition: 'Partly Cloudy',
+        icon: 'partly-cloudy',
+        humidity: 65,
+        windSpeed: 12,
+        uvIndex: 5,
+      },
+      forecast: Array.from({ length: 5 }, (_, i) => {
+        const date = new Date(today);
+        date.setDate(date.getDate() + i);
+        return {
+          date: date.toISOString().split('T')[0],
+          dayOfWeek: dayNames[date.getDay()],
+          high: 75,
+          low: 60,
+          condition: 'Partly Cloudy',
+          icon: 'partly-cloudy',
+          precipChance: 10,
+        };
+      }),
+    };
+  }
 };
 
 export default function WeatherWidget({ village = 'Hatteras Island', compact = false }: WeatherWidgetProps) {
@@ -102,13 +145,10 @@ export default function WeatherWidget({ village = 'Hatteras Island', compact = f
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate API call
-    const timer = setTimeout(() => {
-      setWeather(generateWeatherData(village));
-      setLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timer);
+    // Fetch real weather data
+    fetchWeatherData()
+      .then(setWeather)
+      .finally(() => setLoading(false));
   }, [village]);
 
   if (loading) {

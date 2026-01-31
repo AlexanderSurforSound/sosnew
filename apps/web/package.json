@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.72.1",
     "@graphql-tools/schema": "^10.0.31",
     "@microsoft/signalr": "^8.0.0",
     "@portabletext/react": "^3.0.0",

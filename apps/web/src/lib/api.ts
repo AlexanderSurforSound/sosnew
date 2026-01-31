@@ -388,6 +388,20 @@ class ApiClient {
     return response.json();
   }
 
+  // Sandy AI Agent
+  async sendAgentMessage(request: AgentMessageRequest): Promise<AgentResponse> {
+    const response = await fetch('/api/chat/agent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.error || 'Agent message failed');
+    }
+    return response.json();
+  }
+
   async getChatConversations(sessionId?: string): Promise<ConversationSummary[]> {
     const query = sessionId ? `?sessionId=${sessionId}` : '';
     return this.fetch(`/chat/conversations${query}`);
@@ -477,23 +491,37 @@ class ApiClient {
 
   // Reviews
   async getPropertyReviews(propertyId: string, page = 1, pageSize = 10): Promise<ReviewList> {
-    return this.fetch(`/reviews/property/${propertyId}?page=${page}&pageSize=${pageSize}`);
+    // Use internal API route
+    const response = await fetch(`/api/reviews/property/${propertyId}?page=${page}&pageSize=${pageSize}`);
+    if (!response.ok) throw new Error('Failed to get reviews');
+    return response.json();
   }
 
   async getPropertyReviewStats(propertyId: string): Promise<ReviewStats> {
-    return this.fetch(`/reviews/property/${propertyId}/stats`);
+    // Use internal API route
+    const response = await fetch(`/api/reviews/property/${propertyId}/stats`);
+    if (!response.ok) throw new Error('Failed to get review stats');
+    return response.json();
   }
 
   async createReview(review: CreateReviewRequest): Promise<Review> {
-    return this.fetch('/reviews', {
+    // Use internal API route
+    const response = await fetch('/api/reviews', {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(review),
     });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.error || 'Failed to create review');
+    }
+    return response.json();
   }
 
   async markReviewHelpful(reviewId: string, sessionId?: string): Promise<void> {
     const query = sessionId ? `?sessionId=${sessionId}` : '';
-    return this.fetch(`/reviews/${reviewId}/helpful${query}`, { method: 'POST' });
+    const response = await fetch(`/api/reviews/${reviewId}/helpful${query}`, { method: 'POST' });
+    if (!response.ok) throw new Error('Failed to mark review as helpful');
   }
 }
 
@@ -547,6 +575,29 @@ export interface ChatResponse {
   conversationId: string;
   message: string;
   suggestedActions?: string[];
+}
+
+// Agent types
+export interface AgentMessageRequest {
+  conversationId?: string;
+  sessionId?: string;
+  message: string;
+  context?: {
+    propertyId?: string;
+    page?: string;
+  };
+}
+
+export interface AgentAction {
+  type: 'show_properties' | 'show_booking_confirmation' | 'navigate';
+  data: unknown;
+}
+
+export interface AgentResponse {
+  conversationId: string;
+  message: string;
+  actions?: AgentAction[];
+  toolsUsed?: string[];
 }
 
 export interface ConversationSummary {

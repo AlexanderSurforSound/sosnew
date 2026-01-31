@@ -118,10 +118,38 @@ export default function DigitalCheckin({
     'Report any damages immediately',
   ];
 
-  const handleComplete = () => {
-    setCheckinComplete(true);
-    if (onComplete) {
-      onComplete(guestInfo);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleComplete = async () => {
+    setIsSubmitting(true);
+    try {
+      // Submit check-in to API
+      const response = await fetch('/api/checkin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingId: `bk-${Date.now()}`, // Would come from booking context
+          propertyId: propertyInfo.name.toLowerCase().replace(/\s+/g, '-'),
+          guestInfo,
+          rulesAccepted: agreedToRules,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Check-in failed');
+      }
+
+      setCheckinComplete(true);
+      if (onComplete) {
+        onComplete(guestInfo);
+      }
+    } catch (error) {
+      console.error('Check-in error:', error);
+      // Could show error to user here
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -549,10 +577,20 @@ export default function DigitalCheckin({
         ) : (
           <button
             onClick={handleComplete}
-            className="px-6 py-3 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors flex items-center gap-2"
+            disabled={isSubmitting}
+            className="px-6 py-3 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors flex items-center gap-2 disabled:opacity-50"
           >
-            <Check className="w-5 h-5" />
-            Complete Check-In
+            {isSubmitting ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Completing...
+              </>
+            ) : (
+              <>
+                <Check className="w-5 h-5" />
+                Complete Check-In
+              </>
+            )}
           </button>
         )}
       </div>

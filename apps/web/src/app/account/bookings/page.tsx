@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -32,54 +32,33 @@ interface Booking {
   confirmationCode: string;
 }
 
-const mockBookings: Booking[] = [
-  {
-    id: '1',
-    propertyName: 'Oceanfront Paradise',
-    propertySlug: 'oceanfront-paradise',
-    propertyImage: '/images/properties/oceanfront-1.jpg',
-    village: 'Rodanthe',
-    checkIn: '2024-07-15',
-    checkOut: '2024-07-22',
-    guests: 6,
-    total: 3150,
-    status: 'upcoming',
-    confirmationCode: 'SOS-2024-1234',
-  },
-  {
-    id: '2',
-    propertyName: 'Sunset Retreat',
-    propertySlug: 'sunset-retreat',
-    propertyImage: '/images/properties/sunset-1.jpg',
-    village: 'Avon',
-    checkIn: '2024-03-10',
-    checkOut: '2024-03-17',
-    guests: 4,
-    total: 2275,
-    status: 'completed',
-    confirmationCode: 'SOS-2024-0892',
-  },
-  {
-    id: '3',
-    propertyName: 'Beach Haven',
-    propertySlug: 'beach-haven',
-    propertyImage: '/images/properties/beach-1.jpg',
-    village: 'Buxton',
-    checkIn: '2023-08-05',
-    checkOut: '2023-08-12',
-    guests: 8,
-    total: 3675,
-    status: 'completed',
-    confirmationCode: 'SOS-2023-4521',
-  },
-];
-
 export default function BookingsPage() {
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'completed' | 'cancelled'>('all');
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredBookings = filter === 'all'
-    ? mockBookings
-    : mockBookings.filter(b => b.status === filter);
+  useEffect(() => {
+    fetchBookings();
+  }, [filter]);
+
+  const fetchBookings = async () => {
+    setLoading(true);
+    try {
+      const params = filter !== 'all' ? `?status=${filter}` : '';
+      const response = await fetch(`/api/bookings${params}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setBookings(data.bookings || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch bookings:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredBookings = bookings;
 
   const getStatusIcon = (status: Booking['status']) => {
     switch (status) {
@@ -170,7 +149,27 @@ export default function BookingsPage() {
         </div>
 
         {/* Bookings List */}
-        {filteredBookings.length === 0 ? (
+        {loading ? (
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-2xl border border-gray-200 overflow-hidden animate-pulse">
+                <div className="flex flex-col md:flex-row">
+                  <div className="w-full md:w-64 h-48 bg-gray-200" />
+                  <div className="flex-1 p-6">
+                    <div className="h-6 bg-gray-200 rounded w-1/2 mb-2" />
+                    <div className="h-4 bg-gray-200 rounded w-1/4 mb-4" />
+                    <div className="grid grid-cols-3 gap-4 mb-4">
+                      <div className="h-12 bg-gray-200 rounded" />
+                      <div className="h-12 bg-gray-200 rounded" />
+                      <div className="h-12 bg-gray-200 rounded" />
+                    </div>
+                    <div className="h-10 bg-gray-200 rounded w-1/3" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filteredBookings.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
             <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No bookings found</h3>

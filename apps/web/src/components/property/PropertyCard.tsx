@@ -33,7 +33,6 @@ export function PropertyCard({ property, showPrice = true, onQuickView, variant 
   const { isFavorite, toggleFavorite } = useFavorites();
   const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const inCompare = isInCompare(property.id);
   const propertyIsFavorite = isFavorite(property.id);
 
@@ -79,19 +78,7 @@ export function PropertyCard({ property, showPrice = true, onQuickView, variant 
     onQuickView?.();
   };
 
-  const images = property.images || [];
-  const displayImages = images.slice(0, 4);
-  const currentImage = displayImages[currentImageIndex] || images[0];
-
-  // Handle image pagination on hover
-  const handleImageHover = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (displayImages.length <= 1) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const segmentWidth = rect.width / displayImages.length;
-    const newIndex = Math.floor(x / segmentWidth);
-    setCurrentImageIndex(Math.min(newIndex, displayImages.length - 1));
-  };
+  const primaryImage = property.images?.[0];
 
   if (variant === 'featured') {
     return (
@@ -103,10 +90,10 @@ export function PropertyCard({ property, showPrice = true, onQuickView, variant 
       >
         {/* Background Image */}
         <div className="absolute inset-0">
-          {currentImage ? (
+          {primaryImage ? (
             <Image
-              src={currentImage.url}
-              alt={currentImage.alt || property.name}
+              src={primaryImage.url}
+              alt={primaryImage.alt || property.name}
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, 50vw"
@@ -186,30 +173,27 @@ export function PropertyCard({ property, showPrice = true, onQuickView, variant 
   return (
     <Link
       href={`/properties/${property.slug}`}
-      className="group block bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-ocean-200 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1"
+      className="group block bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-ocean-200/50 transition-all duration-500"
+      style={{
+        boxShadow: isHovered
+          ? '0 20px 40px -12px rgba(0, 0, 0, 0.15), 0 0 30px rgba(0, 140, 186, 0.08)'
+          : '0 1px 3px rgba(0, 0, 0, 0.05)',
+        transform: isHovered ? 'translateY(-6px)' : 'translateY(0)',
+        transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
+      }}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => { setIsHovered(false); setCurrentImageIndex(0); }}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Image Container */}
-      <div
-        className="relative aspect-[4/3] overflow-hidden bg-slate-100"
-        onMouseMove={handleImageHover}
-      >
-        {currentImage ? (
-          <motion.div
-            key={currentImageIndex}
-            initial={{ opacity: 0.8 }}
-            animate={{ opacity: 1 }}
-            className="absolute inset-0"
-          >
-            <Image
-              src={currentImage.url}
-              alt={currentImage.alt || property.name}
-              fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-          </motion.div>
+        {/* Image Container */}
+        <div className="relative aspect-[3/2] overflow-hidden bg-slate-100">
+        {primaryImage ? (
+          <Image
+            src={primaryImage.url}
+            alt={primaryImage.alt || property.name}
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
             <svg className="w-16 h-16 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -218,24 +202,8 @@ export function PropertyCard({ property, showPrice = true, onQuickView, variant 
           </div>
         )}
 
-        {/* Image pagination dots */}
-        {displayImages.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {displayImages.map((_, index) => (
-              <div
-                key={index}
-                className={`h-1 rounded-full transition-all duration-300 ${
-                  index === currentImageIndex
-                    ? 'w-6 bg-white'
-                    : 'w-1.5 bg-white/50'
-                }`}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Gradient overlay - always subtle, stronger on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/5 to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
 
         {/* Action Buttons - Larger touch targets on mobile */}
         <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex gap-1.5 sm:gap-2">
@@ -282,74 +250,100 @@ export function PropertyCard({ property, showPrice = true, onQuickView, variant 
           </motion.button>
         )}
 
-        {/* Badges */}
+        {/* Badges - top left */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {property.featured && (
-            <span className="px-3 py-1 bg-amber-500 text-white text-xs font-semibold rounded-full shadow-md">
+            <motion.span
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-400 text-white text-xs font-semibold rounded-full shadow-lg"
+            >
               Featured
-            </span>
+            </motion.span>
           )}
-          {property.petFriendly && !isHovered && (
-            <span className="px-3 py-1 bg-emerald-500 text-white text-xs font-semibold rounded-full shadow-md">
+        </div>
+
+        {/* Bottom amenity badges - slide up on hover */}
+        <motion.div
+          initial={false}
+          animate={{
+            opacity: isHovered ? 1 : 0,
+            y: isHovered ? 0 : 10,
+          }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="absolute bottom-3 left-3 right-3 flex flex-wrap gap-2"
+        >
+          {property.petFriendly && (
+            <span className="px-2.5 py-1 bg-white/95 backdrop-blur-sm text-emerald-700 text-xs font-medium rounded-full shadow-md">
               Pet Friendly
             </span>
           )}
-        </div>
+          {property.amenities?.some(a => a.name.toLowerCase().includes('pool')) && (
+            <span className="px-2.5 py-1 bg-white/95 backdrop-blur-sm text-cyan-700 text-xs font-medium rounded-full shadow-md">
+              Pool
+            </span>
+          )}
+          {property.amenities?.some(a => a.name.toLowerCase().includes('oceanfront') || a.name.toLowerCase().includes('ocean front')) && (
+            <span className="px-2.5 py-1 bg-white/95 backdrop-blur-sm text-blue-700 text-xs font-medium rounded-full shadow-md">
+              Oceanfront
+            </span>
+          )}
+        </motion.div>
       </div>
 
-      {/* Content */}
-      <div className="p-5">
-        {/* Location */}
-        <div className="flex items-center gap-1.5 text-gray-600 text-sm mb-2">
-          <MapPin className="w-3.5 h-3.5" />
-          <span>{formatVillageName(property.village?.name)}</span>
-        </div>
-
-        {/* Title */}
-        <h3 className="font-semibold text-gray-900 text-lg mb-1 group-hover:text-cyan-700 transition-colors line-clamp-1">
-          {property.name}
-        </h3>
-
-        {/* Headline */}
-        {property.headline && (
-          <p className="text-sm text-gray-600 mb-4 line-clamp-1">{property.headline}</p>
-        )}
-
-        {/* Stats */}
-        <div className="flex items-center gap-5 text-gray-600 mb-4">
-          <span className="flex items-center gap-1.5 text-sm">
-            <Bed className="w-4 h-4 text-gray-600" />
-            <span className="font-medium">{property.bedrooms}</span>
-            <span className="text-gray-600">beds</span>
-          </span>
-          <span className="flex items-center gap-1.5 text-sm">
-            <Bath className="w-4 h-4 text-gray-600" />
-            <span className="font-medium">{property.bathrooms}</span>
-            <span className="text-gray-600">baths</span>
-          </span>
-          <span className="flex items-center gap-1.5 text-sm">
-            <Users className="w-4 h-4 text-gray-600" />
-            <span className="font-medium">{property.sleeps}</span>
-            <span className="text-gray-600">guests</span>
-          </span>
-        </div>
-
-        {/* Divider & Price */}
-        {showPrice && property.baseRate && (
-          <div className="pt-4 border-t border-gray-100 flex items-baseline justify-between">
-            <div className="group-hover:scale-105 transition-transform origin-left">
-              <span className="text-2xl font-semibold text-gray-900 group-hover:text-ocean-600 transition-colors">
-                ${property.baseRate.toLocaleString()}
-              </span>
-              <span className="text-gray-600 ml-1">/ week</span>
-            </div>
-            <div className="flex items-center gap-1 text-amber-500">
-              <Star className="w-4 h-4 fill-current" />
-              <span className="font-medium text-gray-700">4.9</span>
-            </div>
+        {/* Content */}
+        <div className="p-5">
+          {/* Location - small caps style */}
+          <div className="flex items-center gap-1.5 text-gray-500 text-xs uppercase tracking-wider mb-2">
+            <MapPin className="w-3 h-3" />
+            <span>{formatVillageName(property.village?.name)}</span>
           </div>
-        )}
-      </div>
-    </Link>
+
+          {/* Title - serif for premium feel */}
+          <h3 className="font-serif font-semibold text-gray-900 text-lg mb-1 group-hover:text-cyan-700 transition-colors duration-300 line-clamp-1">
+            {property.name}
+          </h3>
+
+          {/* Headline */}
+          {property.headline && (
+            <p className="text-sm text-gray-500 mb-4 line-clamp-1">{property.headline}</p>
+          )}
+
+          {/* Stats - cleaner layout */}
+          <div className="flex items-center gap-4 text-gray-600 mb-4">
+            <span className="flex items-center gap-1.5 text-sm">
+              <Bed className="w-4 h-4 text-gray-400" />
+              <span className="font-medium text-gray-700">{property.bedrooms}</span>
+              <span className="text-gray-500 text-xs">beds</span>
+            </span>
+            <span className="flex items-center gap-1.5 text-sm">
+              <Bath className="w-4 h-4 text-gray-400" />
+              <span className="font-medium text-gray-700">{property.bathrooms}</span>
+              <span className="text-gray-500 text-xs">baths</span>
+            </span>
+            <span className="flex items-center gap-1.5 text-sm">
+              <Users className="w-4 h-4 text-gray-400" />
+              <span className="font-medium text-gray-700">{property.sleeps}</span>
+              <span className="text-gray-500 text-xs">guests</span>
+            </span>
+          </div>
+
+          {/* Divider & Price - accent color for price */}
+          {showPrice && property.baseRate && (
+            <div className="pt-4 border-t border-gray-100 flex items-baseline justify-between">
+              <div>
+                <span className="text-2xl font-bold text-cyan-600 group-hover:text-cyan-700 transition-colors">
+                  ${property.baseRate.toLocaleString()}
+                </span>
+                <span className="text-gray-500 text-sm ml-1">/ week</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                <span className="font-medium text-gray-700 text-sm">4.9</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </Link>
   );
 }
